@@ -1,0 +1,147 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\CarResource\Pages;
+use App\Filament\Resources\CarResource\RelationManagers;
+use App\Models\Car;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\CarResource\RelationManagers\MaintenanceRecordRelationManager;
+
+
+class CarResource extends Resource
+{
+    protected static ?string $model = Car::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function form(Form $form): Form
+{
+    return $form->schema([
+        Forms\Components\Select::make('customer_id')
+            ->label(__('car.customer'))
+            ->relationship('customer', 'name')
+            ->searchable()
+            ->required(),
+
+        Forms\Components\TextInput::make('make')
+            ->label(__('car.make'))
+            ->required(),
+
+        Forms\Components\TextInput::make('model')
+            ->label(__('car.model'))
+            ->required(),
+
+        Forms\Components\TextInput::make('year')
+            ->label(__('car.year'))
+            ->numeric()
+            ->required(),
+
+        Forms\Components\TextInput::make('vin')
+            ->label(__('car.vin'))
+            ->unique()
+            ->required(),
+
+        Forms\Components\TextInput::make('license_plate')
+            ->label(__('car.license_plate'))
+            ->required(),
+
+        Forms\Components\TextInput::make('color')
+            ->label(__('car.color')),
+
+        Forms\Components\TextInput::make('mileage')
+            ->label(__('car.mileage'))
+            ->numeric(),
+
+        Forms\Components\TextInput::make('engine_type')
+            ->label(__('car.engine_type')),
+
+        Forms\Components\TextInput::make('transmission')
+            ->label(__('car.transmission')),
+
+        Forms\Components\Textarea::make('notes')
+            ->label(__('car.notes'))
+            ->rows(3),
+    ]);
+}
+
+    public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            Tables\Columns\TextColumn::make('customer.name')
+                ->label(__('car.customer'))
+                ->sortable()
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('make')
+                ->label(__('car.make'))
+                ->sortable()
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('model')
+                ->label(__('car.model'))
+                ->sortable(),
+
+            Tables\Columns\TextColumn::make('year')
+                ->label(__('car.year'))
+                ->sortable(),
+
+            Tables\Columns\TextColumn::make('license_plate')
+                ->label(__('car.license_plate'))
+                ->sortable()
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('mileage')
+                ->label(__('car.mileage'))
+                ->sortable(),
+
+            Tables\Columns\TextColumn::make('created_at')
+                ->label(__('car.created_at'))
+                ->dateTime()
+                ->since(),
+        ])
+        ->filters([
+            Tables\Filters\SelectFilter::make('make')
+                ->label(__('car.filter.make'))
+                ->options(Car::query()->pluck('make', 'make')->toArray()),
+        ])
+        ->actions([
+            Tables\Actions\ViewAction::make(),
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
+            Tables\Actions\Action::make('print_invoice')
+                ->label('طباعة الفاتورة')
+                ->icon('heroicon-o-printer')
+                ->url(fn ($record) => url("/test-invoice/{$record->id}"))
+                ->openUrlInNewTab(),
+            
+        ])
+        ->bulkActions([
+            Tables\Actions\DeleteBulkAction::make(),
+        ])
+        ->defaultSort('created_at', 'desc');
+}
+
+    public static function getRelations(): array
+    {
+    return [
+        MaintenanceRecordRelationManager::class,
+    ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListCars::route('/'),
+            'create' => Pages\CreateCar::route('/create'),
+            'edit' => Pages\EditCar::route('/{record}/edit'),
+        ];
+    }
+}

@@ -1,0 +1,59 @@
+{
+    "ai":"aiii",
+    "Service Types":"الخدمات",
+    "service_type.name": "اسم الخدمة",
+    "service_type.description": "وصف الخدمة",
+    "service_type.price": "السعر",
+    "service_type.created_at": "تاريخ الإضافة",
+    "service_type.filter.high_cost": "الخدمات المكلفة",
+
+    "car.customer": "الزبون",
+    "car.make": "الشركة المصنعة",
+    "car.model": "الطراز",
+    "car.year": "سنة الصنع",
+    "car.vin": "الرقم التسلسلي",
+    "car.license_plate": "رقم اللوحة",
+    "car.color": "اللون",
+    "car.mileage": "المسافة المقطوعة",
+    "car.engine_type": "نوع المحرك",
+    "car.transmission": "ناقل الحركة",
+    "car.notes": "ملاحظات",
+    "car.created_at": "تاريخ التسجيل",
+    "car.filter.make": "تصفية حسب الشركة",
+
+    "customer.name": "الاسم الكامل",
+    "customer.email": "البريد الإلكتروني",
+    "customer.phone": "رقم الهاتف",
+    "customer.city": "المدينة",
+    "customer.address": "العنوان",
+    "customer.national_id": "الرقم الوطني",
+    "customer.notes": "ملاحظات",
+    "customer.created_at": "تاريخ الإضافة",
+    "customer.filter.city": "تصفية حسب المدينة",
+
+    "maintenance.car": "السيارة",
+  "maintenance.mechanic": "الميكانيكي",
+  "maintenance.service_date": "تاريخ الصيانة",
+  "maintenance.odometer": "عداد الكيلومترات",
+  "maintenance.description": "الوصف",
+  "maintenance.cost": "التكلفة",
+  "maintenance.next_due_date": "موعد الصيانة القادم",
+  "maintenance.service_types": "أنواع الخدمة",
+  "maintenance.filter.due": "الصيانة المستحقة",
+
+  "mechanic.name": "الاسم",
+  "mechanic.phone": "رقم الهاتف",
+  "mechanic.email": "البريد الإلكتروني",
+  "mechanic.specialty": "التخصص",
+  "mechanic.hire_date": "تاريخ التوظيف",
+  "mechanic.active": "نشط",
+  "mechanic.notes": "ملاحظات",
+  "mechanic.filter.active_status": "تصفية حسب الحالة",
+  "mechanic.work_pct": "نسبة العمل",
+
+  
+
+
+
+    "":""
+}
