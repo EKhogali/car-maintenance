@@ -18,6 +18,8 @@ return new class extends Migration
         $table->date('service_date');
         $table->integer('odometer_reading');
         $table->text('description');
+        $table->string('first_check')->nullable();
+        $table->text('detailed_check')->nullable();
         $table->decimal('cost', 10, 2);
         $table->date('next_due_date')->nullable();
         $table->string('status')->default('completed');

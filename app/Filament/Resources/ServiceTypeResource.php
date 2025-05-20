@@ -19,6 +19,7 @@ class ServiceTypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+
     public static function form(Form $form): Form
 {
     return $form
@@ -92,5 +93,25 @@ class ServiceTypeResource extends Resource
             'create' => Pages\CreateServiceType::route('/create'),
             'edit' => Pages\EditServiceType::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('service_type.navigation_label');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Master Data');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('service_type.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('service_type.plural_label');
     }
 }

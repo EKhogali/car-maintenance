@@ -3,63 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <title>فاتورة صيانة</title>
-    <script src="https://cdn.jsdelivr.net/npm/html2media@latest/dist/index.umd.min.js"></script>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #f9f9f9;
-            padding: 20px;
-        }
-        .invoice {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            max-width: 700px;
-            margin: auto;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            margin-bottom: 10px;
-        }
-        .section {
-            margin-bottom: 20px;
-        }
-        .label {
-            font-weight: bold;
-        }
-    </style>
 </head>
-<body>
+<body class="font-sans text-sm" style="direction: rtl; font-family: sans-serif;">
 
-<div class="invoice" id="invoice">
-    <h2>فاتورة صيانة</h2>
+<div class="max-w-3xl mx-auto p-6 border border-black" id="invoice">
 
-    <div class="section">
-        <p><span class="label">العميل:</span> {{ $record->car->customer->name }}</p>
-        <p><span class="label">السيارة:</span> {{ $record->car->make }} - {{ $record->car->model }} - {{ $record->car->license_plate }}</p>
-        <p><span class="label">التاريخ:</span> {{ $record->service_date }}</p>
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h2 class="text-2xl font-bold mb-2">شركة أقساط القابضة</h2>
+        <h3 class="text-xl font-semibold">فاتورة صيانة</h3>
     </div>
 
-    <div class="section">
-        <h4>الخدمات:</h4>
-        <ul>
-            @foreach ($record->serviceTypes as $service)
-                <li>{{ $service->name }} - {{ number_format($service->price, 2) }} LYD</li>
-            @endforeach
-        </ul>
+    <!-- Customer & Car Info -->
+    <div class="mb-6">
+        <h4 class="text-lg font-bold border-b border-black mb-2 pb-1">معلومات العميل والمركبة</h4>
+        <table class="w-full border-collapse">
+            <tr>
+                <td class="border p-2 font-semibold w-1/3">اسم العميل:</td>
+                <td class="border p-2">{{ $record->car->customer->name }}</td>
+            </tr>
+            <tr>
+                <td class="border p-2 font-semibold">السيارة:</td>
+                <td class="border p-2">{{ $record->car->make }} - {{ $record->car->model }}</td>
+            </tr>
+            <tr>
+                <td class="border p-2 font-semibold">رقم اللوحة:</td>
+                <td class="border p-2">{{ $record->car->license_plate }}</td>
+            </tr>
+            <tr>
+                <td class="border p-2 font-semibold">تاريخ الصيانة:</td>
+                <td class="border p-2">{{ $record->service_date }}</td>
+            </tr>
+            <tr>
+                <td class="border p-2 font-semibold">قراءة العداد:</td>
+                <td class="border p-2">{{ $record->odometer_reading }} كم</td>
+            </tr>
+        </table>
     </div>
 
-    <div class="section">
-        <p><span class="label">قراءة العداد:</span> {{ $record->odometer_reading }} كم</p>
-        <p><span class="label">الميكانيكي:</span> {{ $record->mechanic->name ?? '-' }}</p>
-        <p><span class="label">التكلفة:</span> {{ number_format($record->cost, 2) }} LYD</p>
+    <!-- Services -->
+    <div class="mb-6">
+        <h4 class="text-lg font-bold border-b border-black mb-2 pb-1">تفاصيل الخدمات</h4>
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border p-2 text-right">الخدمة</th>
+                    <th class="border p-2 text-right">التكلفة (LYD)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($record->serviceTypes as $service)
+                    <tr>
+                        <td class="border p-2">{{ $service->name }}</td>
+                        <td class="border p-2">{{ number_format($service->price, 2) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
-</div>
 
-<div style="text-align: center; margin-top: 20px;">
-    <button onclick="html2media({ selector: '#invoice', type: 'pdf', filename: 'invoice.pdf' })">
-        طباعة / حفظ PDF
-    </button>
+    <!-- Summary -->
+    <div class="mb-6">
+        <h4 class="text-lg font-bold border-b border-black mb-2 pb-1">الملخص</h4>
+        <table class="w-full border-collapse">
+            <tr>
+                <td class="border p-2 font-semibold w-1/3">الميكانيكي المسؤول:</td>
+                <td class="border p-2">{{ $record->mechanic->name ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="border p-2 font-semibold">إجمالي التكلفة:</td>
+                <td class="border p-2">{{ number_format($record->cost, 2) }} LYD</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center pt-4 border-t border-black">
+        <p class="text-base">شكراً لاختياركم خدماتنا</p>
+    </div>
 </div>
 
 </body>

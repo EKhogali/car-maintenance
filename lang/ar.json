@@ -1,4 +1,8 @@
 {
+   
+    "Master Data": "البيانات الأساسية",
+    "Transactional Data": "العمليات",
+   
     "ai":"aiii",
     "Service Types":"الخدمات",
     "service_type.name": "اسم الخدمة",
@@ -6,6 +10,10 @@
     "service_type.price": "السعر",
     "service_type.created_at": "تاريخ الإضافة",
     "service_type.filter.high_cost": "الخدمات المكلفة",
+
+    "service_type.navigation_label": "أنواع الخدمات",
+    "service_type.model_label": "نوع الخدمة",
+    "service_type.plural_label": "أنواع الخدمات",
 
     "car.customer": "الزبون",
     "car.make": "الشركة المصنعة",
@@ -20,6 +28,10 @@
     "car.notes": "ملاحظات",
     "car.created_at": "تاريخ التسجيل",
     "car.filter.make": "تصفية حسب الشركة",
+    
+    "car.navigation_label": "إدارة السيارات",
+    "car.model_label": "سيارة",
+    "car.plural_label": "السيارات",
 
     "customer.name": "الاسم الكامل",
     "customer.email": "البريد الإلكتروني",
@@ -30,6 +42,10 @@
     "customer.notes": "ملاحظات",
     "customer.created_at": "تاريخ الإضافة",
     "customer.filter.city": "تصفية حسب المدينة",
+    
+    "customer.navigation_label": "إدارة الزبائن",
+    "customer.model_label": "زبون",
+    "customer.plural_label": "الزبائن",
 
     "maintenance.car": "السيارة",
   "maintenance.mechanic": "الميكانيكي",
@@ -40,6 +56,10 @@
   "maintenance.next_due_date": "موعد الصيانة القادم",
   "maintenance.service_types": "أنواع الخدمة",
   "maintenance.filter.due": "الصيانة المستحقة",
+    
+    "maintenance.navigation_label": "إدارة طلبات الصيانة",
+    "maintenance.model_label": "طلب صيانة",
+    "maintenance.plural_label": "طلبات الصيانة",
 
   "mechanic.name": "الاسم",
   "mechanic.phone": "رقم الهاتف",
@@ -50,6 +70,10 @@
   "mechanic.notes": "ملاحظات",
   "mechanic.filter.active_status": "تصفية حسب الحالة",
   "mechanic.work_pct": "نسبة العمل",
+    
+    "mechanic.navigation_label": "إدارة الفنيون",
+    "mechanic.model_label": "فني",
+    "mechanic.plural_label": "فنيون",
 
   
 

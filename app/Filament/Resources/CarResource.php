@@ -144,4 +144,25 @@ class CarResource extends Resource
             'edit' => Pages\EditCar::route('/{record}/edit'),
         ];
     }
+
+    
+    public static function getNavigationLabel(): string
+    {
+        return __('car.navigation_label');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Master Data');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('car.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('car.plural_label');
+    }
 }

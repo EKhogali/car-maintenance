@@ -106,4 +106,24 @@ class CustomerResource extends Resource
             'edit' => Pages\EditCustomer::route('/{record}/edit'),
         ];
     }
+    
+    public static function getNavigationLabel(): string
+    {
+        return __('customer.navigation_label');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Master Data');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('customer.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('customer.plural_label');
+    }
 }

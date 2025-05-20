@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Torgodly\Html2Media\Actions\Html2MediaAction;
+use Torgodly\Html2Media\Tables\Actions\Html2MediaAction as Html2MediaExportAction;
 
 class MaintenanceRecordResource extends Resource
 {
@@ -41,6 +42,14 @@ class MaintenanceRecordResource extends Resource
         Forms\Components\TextInput::make('odometer_reading')
             ->numeric()
             ->label(__('maintenance.odometer')),
+            
+            Forms\Components\TextInput::make('first_check')
+                ->label('الفحص الأولي')
+                ->maxLength(255),
+
+            Forms\Components\Textarea::make('detailed_check')
+                ->label('الفحص التفصيلي')
+                ->rows(4),
 
         Forms\Components\Textarea::make('description')
             ->label(__('maintenance.description')),
@@ -90,14 +99,29 @@ class MaintenanceRecordResource extends Resource
         Tables\Actions\ViewAction::make(),
         Tables\Actions\EditAction::make(),
         Tables\Actions\DeleteAction::make(),
-        Tables\Actions\Action::make('print_invoice')
-            ->label('طباعة الفاتورة')
-            ->icon('heroicon-o-printer'),
+        
+        Tables\Actions\Action::make('view_check')
+            ->label('عرض الفحص')
+            ->icon('heroicon-o-eye')
+            ->modalHeading('تفاصيل الفحص')
+            ->modalSubheading(fn ($record) => 'للسيارة: ' . $record->car->make . ' - ' . $record->car->model)
+            ->modalContent(fn ($record) => view('components.modals.maintenance-check', compact('record')))
+            ->modalSubmitAction(false),
 
-            Html2MediaAction::make('print')
-                ->content(fn($record) => view('invoice', ['record' => $record])),
+        Html2MediaExportAction::make('print')
+        ->label('طباعة')
+        ->preview()
+        ->content(fn ($record) => view('customer-invoice', ['record' => $record])),
 
-        Tables\Actions\DeleteBulkAction::make(),
+        // Html2MediaAction::make('print')
+        //     ->content(fn($record) => view('customer-invoice', ['record' => $record])),
+
+// Html2MediaExportAction::make('print')
+//             ->label('طباعة PDF')
+//             ->view('customer-invoice')
+//             ->filename(fn ($record) => 'invoice-' . $record->id),
+
+        // Tables\Actions\DeleteBulkAction::make(),
     ])
     ->defaultSort('service_date', 'desc');
 }
@@ -116,5 +140,25 @@ class MaintenanceRecordResource extends Resource
             'create' => Pages\CreateMaintenanceRecord::route('/create'),
             'edit' => Pages\EditMaintenanceRecord::route('/{record}/edit'),
         ];
+    }
+    
+    public static function getNavigationLabel(): string
+    {
+        return __('maintenance.navigation_label');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Transactional Data');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('maintenance.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('maintenance.plural_label');
     }
 }

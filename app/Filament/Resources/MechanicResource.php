@@ -117,4 +117,24 @@ class MechanicResource extends Resource
             'edit' => Pages\EditMechanic::route('/{record}/edit'),
         ];
     }
+    
+    public static function getNavigationLabel(): string
+    {
+        return __('mechanic.navigation_label');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Master Data');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('mechanic.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('mechanic.plural_label');
+    }
 }
