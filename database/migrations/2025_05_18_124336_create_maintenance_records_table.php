@@ -17,10 +17,12 @@ return new class extends Migration
         $table->foreignId('mechanic_id')->nullable()->constrained()->onDelete('set null');
         $table->date('service_date');
         $table->integer('odometer_reading');
-        $table->text('description');
+        $table->text('description')->nullable();
         $table->string('first_check')->nullable();
         $table->text('detailed_check')->nullable();
         $table->decimal('cost', 10, 2);
+        $table->decimal('discount', 10, 2);
+        $table->decimal('due', 10, 2);
         $table->date('next_due_date')->nullable();
         $table->string('status')->default('completed');
         $table->timestamps();

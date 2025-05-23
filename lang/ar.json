@@ -56,6 +56,8 @@
   "maintenance.next_due_date": "موعد الصيانة القادم",
   "maintenance.service_types": "أنواع الخدمة",
   "maintenance.filter.due": "الصيانة المستحقة",
+  "maintenance.discount": "الخصم",
+  "maintenance.due": "المبلغ المستحق",
     
     "maintenance.navigation_label": "إدارة طلبات الصيانة",
     "maintenance.model_label": "طلب صيانة",
@@ -74,6 +76,23 @@
     "mechanic.navigation_label": "إدارة الفنيون",
     "mechanic.model_label": "فني",
     "mechanic.plural_label": "فنيون",
+
+      "maintenance.part": "القطعة",
+  "maintenance.quantity": "الكمية",
+  "maintenance.unit_price": "سعر الوحدة",
+  "actions.create": "إضافة",
+  "actions.edit": "تعديل",
+  "actions.delete": "حذف",
+  "actions.bulk_delete": "حذف متعدد",
+
+  "users.navigation_label": "المستخدمون",
+    "users.model_label": "مستخدم",
+    "users.plural_label": "المستخدمون",
+    "users.name": "الاسم",
+    "users.email": "البريد الإلكتروني",
+    "users.password": "كلمة المرور",
+    "users.created_at": "تاريخ الإنشاء",
+    "users.filters.trashed": "المحذوفون",
 
   
 

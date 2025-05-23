@@ -16,6 +16,8 @@ class MaintenanceRecord extends Model
         'odometer_reading',
         'description',
         'cost',
+        'discount',
+        'due',
         'status',
         'next_service_date',
         'mileage_at_service',
@@ -35,5 +37,10 @@ class MaintenanceRecord extends Model
         return $this->belongsToMany(ServiceType::class);
     }
 
-    
+
+
+    public function partUsages()
+    {
+        return $this->hasMany(MaintenanceRecordPart::class);
+    }
 }

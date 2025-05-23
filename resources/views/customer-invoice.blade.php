@@ -1,87 +1,70 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>فاتورة صيانة</title>
-</head>
-<body class="font-sans text-sm" style="direction: rtl; font-family: sans-serif;">
+<div class="invoice p-6 text-sm leading-relaxed">
+    <h2 class="text-xl font-bold border-b pb-2 mb-4">فاتورة صيانة</h2>
 
-<div class="max-w-3xl mx-auto p-6 border border-black" id="invoice">
-
-    <!-- Header -->
-    <div class="text-center mb-8">
-        <h2 class="text-2xl font-bold mb-2">شركة أقساط القابضة</h2>
-        <h3 class="text-xl font-semibold">فاتورة صيانة</h3>
+    <div class="mb-4">
+        <p><span class="font-semibold">العميل:</span> {{ $record->car->customer->name }}</p>
+        <p><span class="font-semibold">السيارة:</span> {{ $record->car->make }} - {{ $record->car->model }} - {{ $record->car->license_plate }}</p>
+        <p><span class="font-semibold">التاريخ:</span> {{ $record->service_date }}</p>
     </div>
 
-    <!-- Customer & Car Info -->
-    <div class="mb-6">
-        <h4 class="text-lg font-bold border-b border-black mb-2 pb-1">معلومات العميل والمركبة</h4>
-        <table class="w-full border-collapse">
-            <tr>
-                <td class="border p-2 font-semibold w-1/3">اسم العميل:</td>
-                <td class="border p-2">{{ $record->car->customer->name }}</td>
-            </tr>
-            <tr>
-                <td class="border p-2 font-semibold">السيارة:</td>
-                <td class="border p-2">{{ $record->car->make }} - {{ $record->car->model }}</td>
-            </tr>
-            <tr>
-                <td class="border p-2 font-semibold">رقم اللوحة:</td>
-                <td class="border p-2">{{ $record->car->license_plate }}</td>
-            </tr>
-            <tr>
-                <td class="border p-2 font-semibold">تاريخ الصيانة:</td>
-                <td class="border p-2">{{ $record->service_date }}</td>
-            </tr>
-            <tr>
-                <td class="border p-2 font-semibold">قراءة العداد:</td>
-                <td class="border p-2">{{ $record->odometer_reading }} كم</td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- Services -->
-    <div class="mb-6">
-        <h4 class="text-lg font-bold border-b border-black mb-2 pb-1">تفاصيل الخدمات</h4>
+    <div class="mb-4">
+        <h3 class="font-bold border-b mb-2">الخدمات:</h3>
         <table class="w-full border-collapse">
             <thead>
-                <tr class="bg-gray-200">
+                <tr>
                     <th class="border p-2 text-right">الخدمة</th>
-                    <th class="border p-2 text-right">التكلفة (LYD)</th>
+                    <th class="border p-2 text-right">السعر</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($record->serviceTypes as $service)
                     <tr>
                         <td class="border p-2">{{ $service->name }}</td>
-                        <td class="border p-2">{{ number_format($service->price, 2) }}</td>
+                        <td class="border p-2">{{ number_format($service->price, 2) }} LYD</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
 
-    <!-- Summary -->
-    <div class="mb-6">
-        <h4 class="text-lg font-bold border-b border-black mb-2 pb-1">الملخص</h4>
+    <div class="mb-4">
+        <h3 class="font-bold border-b mb-2">القطع المستخدمة:</h3>
         <table class="w-full border-collapse">
-            <tr>
-                <td class="border p-2 font-semibold w-1/3">الميكانيكي المسؤول:</td>
-                <td class="border p-2">{{ $record->mechanic->name ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td class="border p-2 font-semibold">إجمالي التكلفة:</td>
-                <td class="border p-2">{{ number_format($record->cost, 2) }} LYD</td>
-            </tr>
+            <thead>
+                <tr>
+                    <th class="border p-2 text-right">القطعة</th>
+                    <th class="border p-2 text-right">الكمية</th>
+                    <th class="border p-2 text-right">سعر الوحدة</th>
+                    <th class="border p-2 text-right">الإجمالي</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($record->partUsages as $usage)
+                    <tr>
+                        <td>{{ $usage->part->name }}</td>
+                        <td>{{ $usage->quantity }}</td>
+                        <td>{{ number_format($usage->unit_price, 2) }}</td>
+                        <td>{{ number_format($usage->quantity * $usage->unit_price, 2) }}</td>
+                    </tr>
+                @endforeach
+                <!-- @foreach ($record->partUsages as $usage)
+                    <tr>
+                        <td class="border p-2">{{ $usage->part->name }}</td>
+                        <td class="border p-2">{{ $usage->quantity }}</td>
+                        <td class="border p-2">{{ number_format($usage->unit_price, 2) }} </td>
+                        <td class="border p-2">{{ number_format($usage->quantity * $usage->unit_price, 2) }} </td>
+                    </tr>
+                @endforeach -->
+            </tbody>
         </table>
     </div>
 
-    <!-- Footer -->
-    <div class="text-center pt-4 border-t border-black">
-        <p class="text-base">شكراً لاختياركم خدماتنا</p>
-    </div>
+<div class="mt-6 border-t pt-4">
+    <p><span class="font-semibold">الإجمالي:</span> {{ number_format($record->cost, 2) }} </p>
+    <p><span class="font-semibold">الخصم:</span> {{ number_format($record->discount, 2) }} </p>
+    <p><span class="font-semibold">المبلغ المستحق:</span> {{ number_format($record->due, 2) }} </p>
+    <p><span class="font-semibold">الميكانيكي:</span> {{ $record->mechanic->name ?? '-' }}</p>
+    <p><span class="font-semibold">قراءة العداد:</span> {{ $record->odometer_reading }} كم</p>
 </div>
 
-</body>
-</html>
+</div>

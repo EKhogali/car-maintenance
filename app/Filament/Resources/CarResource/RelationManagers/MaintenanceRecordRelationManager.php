@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CarResource\RelationManagers;
 
+use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -24,6 +25,7 @@ class MaintenanceRecordRelationManager extends RelationManager
         return $form->schema([
             Forms\Components\DatePicker::make('service_date')
                 ->label(__('maintenance.service_date'))
+                ->default(now())
                 ->required(),
 
             Forms\Components\TextInput::make('odometer_reading')
@@ -39,12 +41,35 @@ class MaintenanceRecordRelationManager extends RelationManager
                 ->multiple()
                 ->relationship('serviceTypes', 'name')
                 ->preload()
-                ->label(__('maintenance.service_types')),
+                ->label(__('maintenance.service_types'))
+                ->reactive()
+                ->afterStateUpdated(function ($state, callable $set) {
+                    // Fetch prices and calculate total
+                    $total = ServiceType::whereIn('id', $state)->sum('price');
+                    $set('cost', $total);
+                }),
 
             Forms\Components\TextInput::make('cost')
                 ->numeric()
                 ->prefix('LYD')
-                ->label(__('maintenance.cost')),
+                ->label(__('maintenance.cost'))
+                ->dehydrated(true),
+
+            Forms\Components\TextInput::make('discount')
+                ->label(__('maintenance.discount'))
+                ->numeric()
+                ->default(0)
+                ->prefix('LYD')
+                ->reactive()
+                ->afterStateUpdated(fn ($state, callable $set, callable $get) => 
+                    $set('due', max(0, ($get('cost') ?? 0) - $state))
+                ),
+
+            Forms\Components\TextInput::make('due')
+                ->label(__('maintenance.due'))
+                ->prefix('LYD')
+                ->disabled()
+                ->dehydrated(true),
 
             Forms\Components\DatePicker::make('next_due_date')
                 ->label(__('maintenance.next_due_date')),
@@ -92,10 +117,26 @@ class MaintenanceRecordRelationManager extends RelationManager
             Tables\Actions\ViewAction::make(),
             Tables\Actions\EditAction::make(),
             Tables\Actions\DeleteAction::make(),
+            Html2MediaAction::make('print')
+    ->label('طباعة')
+    ->content(fn($record) => view('customer-invoice', ['record' => $record]))
         ])
         ->bulkActions([
             Tables\Actions\DeleteBulkAction::make(),
         ]);
     }
+
+    public static function beforeSave(Form $form, Model $record): void
+    {
+        $servicesCost = $record->serviceTypes()->sum('price');
+        $partsCost = $record->partUsages->sum(fn($item) => $item->quantity * $item->unit_price);
+        $record->cost = $servicesCost + $partsCost;
+
+        // Apply discount
+        $record->due = max(0, $record->cost - $record->discount);
+    }
+
+
+
 }
 

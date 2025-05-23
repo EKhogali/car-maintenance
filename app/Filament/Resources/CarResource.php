@@ -116,11 +116,11 @@ class CarResource extends Resource
             Tables\Actions\ViewAction::make(),
             Tables\Actions\EditAction::make(),
             Tables\Actions\DeleteAction::make(),
-            Tables\Actions\Action::make('print_invoice')
-                ->label('طباعة الفاتورة')
-                ->icon('heroicon-o-printer')
-                ->url(fn ($record) => url("/test-invoice/{$record->id}"))
-                ->openUrlInNewTab(),
+            // Tables\Actions\Action::make('print_invoice')
+            //     ->label('طباعة الفاتورة')
+            //     ->icon('heroicon-o-printer')
+            //     ->url(fn ($record) => url("/test-invoice/{$record->id}"))
+            //     ->openUrlInNewTab(),
             
         ])
         ->bulkActions([

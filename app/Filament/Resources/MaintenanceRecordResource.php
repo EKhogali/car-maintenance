@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\MaintenanceRecordResource\RelationManagers\PartUsagesRelationManager;
+
 use App\Filament\Resources\MaintenanceRecordResource\Pages;
 use App\Filament\Resources\MaintenanceRecordResource\RelationManagers;
 use App\Models\MaintenanceRecord;
@@ -37,6 +39,7 @@ class MaintenanceRecordResource extends Resource
 
         Forms\Components\DatePicker::make('service_date')
             ->required()
+                ->default(now())
             ->label(__('maintenance.service_date')),
 
         Forms\Components\TextInput::make('odometer_reading')
@@ -127,11 +130,11 @@ class MaintenanceRecordResource extends Resource
 }
 
     public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+{
+    return [
+        PartUsagesRelationManager::class,
+    ];
+}
 
     public static function getPages(): array
     {
@@ -161,4 +164,22 @@ class MaintenanceRecordResource extends Resource
     {
         return __('maintenance.plural_label');
     }
+
+    public static function beforeSave(Form $form, Model $record): void
+{
+    // Calculate total service type cost
+    $servicesCost = $record->serviceTypes()->sum('price');
+
+    // Calculate total part usage cost
+    $partsCost = $record->partUsages->sum(function ($part) {
+        return $part->quantity * $part->unit_price;
+    });
+
+    // Combine
+    $record->cost = $servicesCost + $partsCost;
+
+    // Apply discount if set
+    $record->due = max(0, $record->cost - ($record->discount ?? 0));
+}
+
 }
