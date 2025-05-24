@@ -66,7 +66,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')->label(__('users.created_at'))->dateTime('Y-m-d'),
             ])
             ->filters([
-                TrashedFilter::make()->label(__('users.filters.trashed')),
+                // TrashedFilter::make()->label(__('users.filters.trashed')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
