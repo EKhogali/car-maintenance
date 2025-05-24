@@ -7,19 +7,18 @@ use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Filters\TrashedFilter;
+use Illuminate\Support\Facades\Hash;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\UserResource\Pages;
+use Filament\Tables\Actions\Action;
+use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
-
-    // protected static ?string $navigationGroup = __('Master Data');
 
     public static function getNavigationLabel(): string
     {
@@ -54,7 +53,17 @@ class UserResource extends Resource
                 ->label(__('users.password'))
                 ->password()
                 ->maxLength(255)
-                ->required(fn (string $context) => $context === 'create'),
+                ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
+                ->required(fn (string $context) => $context === 'create')
+                ->visible(fn (string $context) => $context === 'create'),
+
+            Forms\Components\Select::make('roles')
+                ->label(__('users.roles'))
+                ->relationship('roles', 'name')
+                ->multiple()
+                ->preload()
+                ->searchable()
+                ->required(),
         ]);
     }
 
@@ -66,13 +75,29 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')->label(__('users.email'))->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('created_at')->label(__('users.created_at'))->dateTime('Y-m-d'),
             ])
-            ->filters([
-                // TrashedFilter::make()->label(__('users.filters.trashed')),
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+
+                Action::make('change_password')
+                    ->label(__('users.change_password'))
+                    ->icon('heroicon-o-lock-closed')
+                    ->form([
+                        Forms\Components\TextInput::make('new_password')
+                            ->label(__('users.new_password'))
+                            ->password()
+                            ->required()
+                            ->minLength(6),
+                    ])
+                    ->action(function (User $record, array $data) {
+                        $record->update([
+                            'password' => Hash::make($data['new_password']),
+                        ]);
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading(__('users.change_password_modal_title')),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
@@ -93,13 +118,12 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
-public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
-{
-    return parent::getEloquentQuery()
-        ->when(
-            auth()->id() !== 1,
-            fn ($query) => $query->where('id', '!=', 1)
-        );
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->when(auth()->id() !== 1, fn ($query) => $query->where('id', '!=', 1));
+    }
 }
-}
+
 

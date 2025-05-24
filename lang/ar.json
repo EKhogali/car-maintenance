@@ -85,14 +85,17 @@
   "actions.delete": "حذف",
   "actions.bulk_delete": "حذف متعدد",
 
-  "users.navigation_label": "المستخدمون",
+"users.navigation_label": "المستخدمون",
     "users.model_label": "مستخدم",
     "users.plural_label": "المستخدمون",
     "users.name": "الاسم",
     "users.email": "البريد الإلكتروني",
     "users.password": "كلمة المرور",
+    "users.new_password": "كلمة مرور جديدة",
+    "users.change_password": "تغيير كلمة المرور",
+    "users.change_password_modal_title": "تغيير كلمة مرور المستخدم",
+    "users.roles": "الأدوار",
     "users.created_at": "تاريخ الإنشاء",
-    "users.filters.trashed": "المحذوفون",
 
   
 
