@@ -10,10 +10,13 @@ class EditMaintenanceRecord extends EditRecord
 {
     protected static string $resource = MaintenanceRecordResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
+    // protected function getHeaderActions(): array
+    // {
+    //     return [
+    //         Actions\DeleteAction::make(),
+    //     ];
+    // }
+
+
+
 }

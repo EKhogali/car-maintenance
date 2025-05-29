@@ -97,8 +97,16 @@
     "users.roles": "الأدوار",
     "users.created_at": "تاريخ الإنشاء",
 
-  
-
+      "parts.navigation_label": "قطع الغيار",
+    "parts.model_label": "قطعة غيار",
+    "parts.plural_label": "قطع الغيار",
+    "parts.name": "الاسم",
+    "parts.price": "السعر",
+    "parts.created_at": "تاريخ الإنشاء",
+    "parts.updated_at": "تاريخ التحديث",
+    "parts.unit_price": "سعر الوحدة",
+    "parts.quantity": "الكمية",
+    "parts.total": "الإجمالي",
 
 
     "":""

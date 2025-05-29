@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Filament\Resources;
-
 use App\Filament\Resources\MaintenanceRecordResource\RelationManagers\PartUsagesRelationManager;
+
+
 
 use App\Filament\Resources\MaintenanceRecordResource\Pages;
 use App\Filament\Resources\MaintenanceRecordResource\RelationManagers;
@@ -129,12 +130,14 @@ class MaintenanceRecordResource extends Resource
     ->defaultSort('service_date', 'desc');
 }
 
-    public static function getRelations(): array
+public static function getRelations(): array
 {
     return [
         PartUsagesRelationManager::class,
+        // \App\Filament\Resources\MaintenanceRecordResource\RelationManagers\PartUsagesRelationManager::class,
     ];
 }
+
 
     public static function getPages(): array
     {

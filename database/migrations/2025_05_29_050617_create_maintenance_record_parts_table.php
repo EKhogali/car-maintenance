@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('maintenance_record_parts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('maintenance_record_id')->constrained()->onDelete('cascade');
-            $table->foreignId('part_id')->constrained()->onDelete('cascade');
-            $table->integer('quantity')->default(1);
+            $table->foreignId('maintenance_record_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('part_id')->constrained()->cascadeOnDelete();
+            $table->integer('quantity');
             $table->decimal('unit_price', 10, 2);
             $table->timestamps();
         });

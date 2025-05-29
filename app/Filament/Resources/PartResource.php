@@ -79,4 +79,25 @@ class PartResource extends Resource
             'edit' => Pages\EditPart::route('/{record}/edit'),
         ];
     }
+
+    
+    public static function getNavigationLabel(): string
+    {
+        return __('parts.navigation_label');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Master Data');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('parts.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('parts.plural_label');
+    }
 }

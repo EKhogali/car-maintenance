@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Car;
+use App\Models\Mechanic;
+use App\Models\ServiceType;
+use App\Models\MaintenanceRecordPart;
+
 
 class MaintenanceRecord extends Model
 {
@@ -36,11 +41,10 @@ class MaintenanceRecord extends Model
     {
         return $this->belongsToMany(ServiceType::class);
     }
+public function partUsages()
+{
+    return $this->hasMany(MaintenanceRecordPart::class);
+}
 
-
-
-    public function partUsages()
-    {
-        return $this->hasMany(MaintenanceRecordPart::class);
-    }
+  
 }
