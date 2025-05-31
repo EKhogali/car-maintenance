@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\CarResource\RelationManagers\MaintenanceRecordRelationManager;
+use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 
 
 class CarResource extends Resource
@@ -117,11 +118,11 @@ class CarResource extends Resource
             Tables\Actions\ViewAction::make(),
             Tables\Actions\EditAction::make(),
             Tables\Actions\DeleteAction::make(),
-            // Tables\Actions\Action::make('print_invoice')
-            //     ->label('طباعة الفاتورة')
-            //     ->icon('heroicon-o-printer')
-            //     ->url(fn ($record) => url("/test-invoice/{$record->id}"))
-            //     ->openUrlInNewTab(),
+        Html2MediaAction::make('print_receive_form')
+            ->label('طباعة استمارة الاستلام')
+            ->icon('heroicon-o-printer')
+            ->preview() // ✅ This works now
+            ->content(fn ($record) => view('car-receive-form', ['car' => $record])),
             
         ])
         ->bulkActions([
