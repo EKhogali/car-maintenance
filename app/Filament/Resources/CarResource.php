@@ -57,7 +57,8 @@ class CarResource extends Resource
 
         Forms\Components\TextInput::make('mileage')
             ->label(__('car.mileage'))
-            ->numeric(),
+            ->numeric()
+            ->required(),
 
         Forms\Components\TextInput::make('engine_type')
             ->label(__('car.engine_type')),
