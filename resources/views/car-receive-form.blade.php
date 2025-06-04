@@ -10,8 +10,8 @@
     <div style="display: flex; align-items: center; border-bottom: 2px solid #c9a15d; padding-bottom: 10px; margin-bottom: 20px;">
         <img src="{{ asset('images/logo.png') }}" style="width: 100px; margin-left: 20px;">
         <div>
-            <h2 style="margin: 0;">مركز قراند لصيانة السيارات</h2>
-            <p style="margin: 0;">فرع بنغازي - شارع سيدي خليفة</p>
+            <h2 style="margin: 0;">مركز أقساط لصيانة السيارات</h2>
+            <p style="margin: 0;">091111111111</p>
         </div>
     </div>
 
@@ -26,21 +26,45 @@
         <div><strong>العداد:</strong> {{ $car->mileage }} كم</div>
     </div>
 
-    <!-- Check Items -->
-    <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;">فحص الأليات / ميكانيك / سمكرة / طلاء / الصالة / أعطال</div>
-    <div style="margin-top: 10px;">
-        <label><input type="checkbox"> زيت المحرك</label><br>
-        <label><input type="checkbox"> زيت الفرامل</label><br>
-        <label><input type="checkbox"> زيت القير</label><br>
-        <label><input type="checkbox"> فلتر الهواء</label><br>
-        <label><input type="checkbox"> فحص شامل</label><br>
-        <label><input type="checkbox"> فحص الهيكل</label><br>
-        <label><input type="checkbox"> فحص الطلاء</label><br>
+    <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;">صور السيارة عند الاستلام</div>
+    <div style="display: flex; gap: 10px;">
+        @foreach($car->images as $image)
+         <img src="{{ asset('storage/' . $image->image_path) }}"  width="300" height="200">
+         @endforeach
     </div>
+
+    <!-- Check Items -->
+    <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;">الفحص الأولي</div>
+    <div style="border: 1px solid #ccc; height: 100px; margin-top: 10px;">
+        <div style="margin-top: 10px; min-height: 120px;">
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+        </div>
+    </div>
+
+
+
 
     <!-- Notes -->
     <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;">ملاحظات أخرى</div>
-    <div style="border: 1px solid #ccc; height: 100px; margin-top: 10px;"></div>
+    <div style="border: 1px solid #ccc; height: 100px; margin-top: 10px;">
+        <div style="margin-top: 10px; min-height: 120px;">
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+            <div style="height: 20px;"></div>
+        </div>
+    </div>
 
     <!-- Damage Map -->
     <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;">مواقع التلف</div>

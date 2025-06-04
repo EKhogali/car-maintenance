@@ -16,6 +16,8 @@ return new class extends Migration
         $table->foreignId('car_id')->constrained()->onDelete('cascade');
         $table->foreignId('mechanic_id')->nullable()->constrained()->onDelete('set null');
         $table->date('service_date');
+        $table->integer('payment_method')->default(0);
+        // $table->enum('payment_method', ['cash', 'card', 'transfer'])->default('cash');
         $table->integer('odometer_reading');
         $table->text('description')->nullable();
         $table->string('first_check')->nullable();

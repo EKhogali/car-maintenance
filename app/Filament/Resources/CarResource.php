@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\CarResource\RelationManagers\MaintenanceRecordRelationManager;
 use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
+use Illuminate\Validation\Rule;
 
 
 class CarResource extends Resource
@@ -46,8 +47,12 @@ class CarResource extends Resource
 
         Forms\Components\TextInput::make('vin')
             ->label(__('car.vin'))
-            ->unique()
-            ->required(),
+            ->required()
+            ->rule(function ($context) {
+                return $context === 'create'
+                    ? [Rule::unique('cars', 'vin')]
+                    : []; // No uniqueness rule on edit
+            }),
 
         Forms\Components\TextInput::make('license_plate')
             ->label(__('car.license_plate'))
@@ -70,6 +75,34 @@ class CarResource extends Resource
         Forms\Components\Textarea::make('notes')
             ->label(__('car.notes'))
             ->rows(3),
+
+            Forms\Components\FileUpload::make('images')
+                ->label('صور السيارة عند الاستلام')
+                ->disk('public')
+                ->directory('car-receive-images')
+                ->multiple()
+                ->preserveFilenames()
+                ->maxFiles(3)
+                ->image()
+                ->reorderable()
+                ->afterStateHydrated(function ($component, $record) {
+                    if ($record) {
+                        $component->state($record->images->pluck('image_path')->toArray());
+                    }
+                })
+                ->afterStateUpdated(function ($state, $set, $get, $record) {
+                    if ($record) {
+                        $record->images()->delete();
+
+                        foreach ($state as $file) {
+                            $storedPath = is_string($file)
+                                ? $file // already stored path
+                                : $file->store('car-receive-images', 'public'); // store file
+
+                            $record->images()->create(['image_path' => $storedPath]);
+                        }
+                    }
+                })
     ]);
 }
 

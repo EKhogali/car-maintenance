@@ -29,4 +29,9 @@ class Car extends Model
     {
         return $this->hasMany(MaintenanceRecord::class);
     }
+
+    public function images()
+{
+    return $this->hasMany(CarImage::class);
+}
 }

@@ -43,13 +43,25 @@ class MaintenanceRecordResource extends Resource
                 ->default(now())
             ->label(__('maintenance.service_date')),
 
+        Forms\Components\Select::make('payment_method')
+            ->required()
+            ->options([
+                '0' => 'كاش',
+                '1' => 'بطاقة',
+                '2' => 'تحويل',
+            ])
+            ->default('cash')
+            ->label(__('maintenance.payment_method'))
+            ->native(false),
+
+
         Forms\Components\TextInput::make('odometer_reading')
             ->numeric()
             ->label(__('maintenance.odometer')),
             
-            Forms\Components\TextInput::make('first_check')
+            Forms\Components\Textarea::make('first_check')
                 ->label('الفحص الأولي')
-                ->maxLength(255),
+                ->rows(4),
 
             Forms\Components\Textarea::make('detailed_check')
                 ->label('الفحص التفصيلي')
@@ -86,6 +98,17 @@ class MaintenanceRecordResource extends Resource
         Tables\Columns\TextColumn::make('service_date')
             ->label(__('maintenance.service_date'))
             ->date(),
+
+            Tables\Columns\TextColumn::make('payment_method')
+                ->label(__('maintenance.payment_method'))
+                ->sortable()
+                ->searchable()
+                ->formatStateUsing(fn (string $state) => match ($state) {
+                    '0' => 'نقدي',
+                    '1' => 'بطاقة',
+                    '2' => 'تحويل',
+                    default => $state,
+                }),
 
         Tables\Columns\TextColumn::make('cost')
             ->label(__('maintenance.cost'))
