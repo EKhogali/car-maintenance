@@ -17,14 +17,42 @@
 
     <!-- Car Info -->
     <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold;">استمارة فحص السيارة</div>
-    <div style="margin-top: 10px;">
+    <!-- <div style="margin-top: 10px;">
         <div><strong>اسم الزبون:</strong> {{ $car->customer->name }}</div>
         <div><strong>رقم الهاتف:</strong> {{ $car->customer->phone ?? '-' }}</div>
         <div><strong>رقم لوحة السيارة:</strong> {{ $car->license_plate }}</div>
         <div><strong>موديل السيارة:</strong> {{ $car->model }}</div>
         <div><strong>لون السيارة:</strong> {{ $car->color }}</div>
         <div><strong>العداد:</strong> {{ $car->mileage }} كم</div>
-    </div>
+    </div> -->
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;">
+        <tr>
+            <td style="padding: 8px; border: 1px solid #000; width: 25%;"><strong>اسم الزبون:</strong></td>
+            <td style="padding: 8px; border: 1px solid #000;">{{ $car->customer->name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #000;"><strong>رقم الهاتف:</strong></td>
+            <td style="padding: 8px; border: 1px solid #000;">{{ $car->customer->phone ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #000;"><strong>رقم لوحة السيارة:</strong></td>
+            <td style="padding: 8px; border: 1px solid #000;">{{ $car->license_plate }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #000;"><strong>موديل السيارة:</strong></td>
+            <td style="padding: 8px; border: 1px solid #000;">{{ $car->model }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #000;"><strong>لون السيارة:</strong></td>
+            <td style="padding: 8px; border: 1px solid #000;">{{ $car->color }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #000;"><strong>العداد:</strong></td>
+            <td style="padding: 8px; border: 1px solid #000;">{{ $car->mileage }} كم</td>
+        </tr>
+    </table>
+
 
     <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;">صور السيارة عند الاستلام</div>
     <div style="display: flex; gap: 10px;">
