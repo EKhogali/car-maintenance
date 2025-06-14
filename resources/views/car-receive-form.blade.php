@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>استمارة استلام سيارة</title>
-    
-</head>
-<body style="font-family: Arial, sans-serif; direction: rtl; margin: 40px; color: #000; font-size: 14px;">
+
+<div style="font-family: Arial, sans-serif; direction: rtl; margin: 40px; color: #000; font-size: 14px;">
 
     <!-- Header -->
     <div style="display: flex; align-items: center; border-bottom: 1px solid #c9a15d; padding-bottom: 10px; margin-bottom: 20px;">
@@ -22,7 +16,7 @@
     <table style="width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 12px;">
         <tr>
             <td style="padding: 4px; border: 1px solid #000; width: 25%;"><strong>اسم الزبون:</strong></td>
-            <td style="padding: 4px; border: 1px solid #000;">{{ $car->customer->name }}</td>
+            <td class="text-red-500">{{ $car->customer->name }}</td>
         </tr>
         <tr>
             <td style="padding: 4px; border: 1px solid #000;"><strong>رقم الهاتف:</strong></td>
@@ -92,5 +86,5 @@
         </div>
     </div>
 
-</body>
-</html>
+</div>
+
