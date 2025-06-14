@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Filament\Resources;
-use App\Filament\Resources\MaintenanceRecordResource\RelationManagers\PartUsagesRelationManager;
-
 
 
 use App\Filament\Resources\MaintenanceRecordResource\Pages;
@@ -156,8 +154,7 @@ class MaintenanceRecordResource extends Resource
 public static function getRelations(): array
 {
     return [
-        PartUsagesRelationManager::class,
-        // \App\Filament\Resources\MaintenanceRecordResource\RelationManagers\PartUsagesRelationManager::class,
+        // UsedPartsRelationManager::class,
     ];
 }
 

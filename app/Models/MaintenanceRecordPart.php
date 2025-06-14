@@ -12,6 +12,7 @@ class MaintenanceRecordPart extends Model
     protected $fillable = [
         'maintenance_record_id',
         'part_id',
+        'part_name',
         'quantity',
         'unit_price',
     ];

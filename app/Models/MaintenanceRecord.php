@@ -41,10 +41,21 @@ class MaintenanceRecord extends Model
     {
         return $this->belongsToMany(ServiceType::class);
     }
-public function partUsages()
+    public function partUsages()
+    {
+        return $this->hasMany(MaintenanceRecordPart::class);
+    }
+
+    public function usedParts()
+    {
+        return $this->hasMany(MaintenanceRecordPart::class);
+    }
+
+    public function getPartsTotalAttribute()
 {
-    return $this->hasMany(MaintenanceRecordPart::class);
+    return $this->usedParts->sum(fn ($usage) => $usage->quantity * $usage->unit_price);
 }
+
 
   
 }

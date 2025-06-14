@@ -118,12 +118,12 @@ class MaintenanceRecordRelationManager extends RelationManager
             Tables\Actions\EditAction::make(),
             Tables\Actions\DeleteAction::make(),
             Html2MediaAction::make('print')
-    ->label('طباعة')
-    ->content(fn($record) => view('customer-invoice', ['record' => $record]))
-        ])
-        ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
-        ]);
+                // ->label('طباعة')
+                // ->content(fn($record) => view('customer-invoice', ['record' => $record]))
+                    ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]);
     }
 
     public static function beforeSave(Form $form, Model $record): void

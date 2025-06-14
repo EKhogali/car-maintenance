@@ -8,10 +8,14 @@
 
     <!-- Header -->
     <div style="display: flex; align-items: center; border-bottom: 2px solid #c9a15d; padding-bottom: 10px; margin-bottom: 20px;">
-        <img src="{{ asset('images/logo.png') }}" style="width: 100px; margin-left: 20px;">
+        <!-- <img src="{{ asset('images/logo.png') }}" style="width: 100px; margin-left: 20px;"> -->
+        <!-- <img src="{{ asset('storage/logo.jpg') }}" style="width: 100px; margin-left: 20px;"> -->
+        <img src="{{ asset('storage/logo.jpg') }}" style="width: 80px; height: auto; margin-left: 20px; display: inline-block;">
+
+
         <div>
             <h2 style="margin: 0;">مركز أقساط لصيانة السيارات</h2>
-            <p style="margin: 0;">091111111111</p>
+            <p style="margin: 0;">091-804 3777</p>
         </div>
     </div>
 
@@ -55,24 +59,18 @@
 
 
     <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;">صور السيارة عند الاستلام</div>
-    <div style="display: flex; gap: 10px;">
-        @foreach($car->images as $image)
-         <img src="{{ asset('storage/' . $image->image_path) }}"  width="300" height="200">
-         @endforeach
+
+
+    <div style="display: block; margin-top: 10px;">
+        <img src="{{ asset('storage/car_sample.jpg') }}" style="width: 100%; max-width: 300px; height: auto; display: block;">
     </div>
+
+
 
     <!-- Check Items -->
     <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;">الفحص الأولي</div>
-    <div style="border: 1px solid #ccc; height: 100px; margin-top: 10px;">
+    <div style="border: 1px solid #ccc; height: 180px; margin-top: 10px;">
         <div style="margin-top: 10px; min-height: 120px;">
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
         </div>
     </div>
 
@@ -81,22 +79,22 @@
 
     <!-- Notes -->
     <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;">ملاحظات أخرى</div>
-    <div style="border: 1px solid #ccc; height: 100px; margin-top: 10px;">
+    <div style="border: 1px solid #ccc; height: 150px; margin-top: 10px;">
         <div style="margin-top: 10px; min-height: 120px;">
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
-            <div style="height: 20px;"></div>
         </div>
     </div>
 
+
+    <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;"><strong>قطع الغيار</strong></div>
+    <div style="border: 1px solid #ccc; height: 200px; margin-top: 10px;">
+        <div style="margin-top: 10px; min-height: 120px;">
+        </div>
+    </div>
+
+
     <!-- Damage Map -->
-    <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;">مواقع التلف</div>
-    <img src="{{ asset('images/car-damage-map.png') }}" style="margin-top: 10px; width: 100%; max-width: 600px;">
+    <!-- <div style="background: #c9a15d; color: white; padding: 8px; font-weight: bold; margin-top: 20px;">مواقع التلف</div>
+    <img src="{{ asset('images/car-damage-map.png') }}" style="margin-top: 10px; width: 100%; max-width: 600px;"> -->
 
     <!-- Signatures -->
     <div style="display: flex; justify-content: space-between; margin-top: 40px;">

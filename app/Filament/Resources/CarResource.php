@@ -153,6 +153,7 @@ class CarResource extends Resource
             Tables\Actions\DeleteAction::make(),
         Html2MediaAction::make('print_receive_form')
             ->label('طباعة استمارة الاستلام')
+    ->modal(false)
             ->icon('heroicon-o-printer')
             ->preview() // ✅ This works now
             ->content(fn ($record) => view('car-receive-form', ['car' => $record])),
