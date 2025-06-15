@@ -46,7 +46,8 @@ class PartResource extends Resource
         ->columns([
             TextColumn::make('name')->label('اسم القطعة')->searchable(),
             TextColumn::make('code')->label('الرمز')->toggleable(),
-            TextColumn::make('price')->label('السعر')->money('lyd'),
+            TextColumn::make('price')->label('السعر')
+    ->formatStateUsing(fn ($state) => number_format($state, 2) . ''),
         ])
         ->filters([
             Tables\Filters\TernaryFilter::make('price')

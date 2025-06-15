@@ -55,7 +55,7 @@ class ServiceTypeResource extends Resource
             Tables\Columns\TextColumn::make('price')
                 ->label(__('service_type.price'))
                 ->sortable()
-                ->money('lyd'),
+    ->formatStateUsing(fn ($state) => number_format($state, 2) . ''),
 
             Tables\Columns\TextColumn::make('created_at')
                 ->label(__('service_type.created_at'))

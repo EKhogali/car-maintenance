@@ -6,17 +6,17 @@
         <img src="{{ asset('storage/logo.jpg') }}" style="width: 60px; height: auto; margin-left: 20px; display: inline-block;">
         <div>
             <h2 style="margin: 0;">مركز أقساط لصيانة السيارات</h2>
-            <p style="margin: 0;">091-804 3777</p>
+            <p style="margin: 0;">0918043777</p>
         </div>
     </div>
 
     <!-- Car Info -->
-    <div style="background: #c9a15d; color: white; padding: 4px 6px; font-weight: bold;">استمارة فحص السيارة</div>
+    <div style="background: #c9a15d; color: white; padding: 6px; font-weight: bold;">استمارة فحص السيارة</div>
 
     <table style="width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 12px;">
         <tr>
             <td style="padding: 4px; border: 1px solid #000; width: 25%;"><strong>اسم الزبون:</strong></td>
-            <td class="text-red-500">{{ $car->customer->name }}</td>
+            <td style="padding: 4px; border: 1px solid #000;">{{ $car->customer->name }}</td>
         </tr>
         <tr>
             <td style="padding: 4px; border: 1px solid #000;"><strong>رقم الهاتف:</strong></td>
@@ -41,7 +41,7 @@
     </table>
 
 
-    <div style="background: #c9a15d; color: white; padding: 4px 6px; font-weight: bold; margin-top: 20px;">صور السيارة عند الاستلام</div>
+    <div style="background: #c9a15d; color: white; padding: 6px; font-weight: bold; margin-top: 10px;">صور السيارة عند الاستلام</div>
 
 
     <div style="display: block; margin-top: 10px;">
@@ -51,7 +51,7 @@
 
 
     <!-- Check Items -->
-    <div style="background: #c9a15d; color: white; padding: 4px 6px; font-weight: bold; margin-top: 20px;">الفحص الأولي</div>
+    <div style="background: #c9a15d; color: white; padding: 6px; font-weight: bold; margin-top: 10px;">الفحص الأولي</div>
     <div style="border: 1px solid #ccc; height: 80px; margin-top: 10px;">
         <div style="margin-top: 10px; min-height: 120px;">
         </div>
@@ -61,7 +61,7 @@
 
 
     <!-- Notes -->
-    <div style="background: #c9a15d; color: white; padding: 4px 6px; font-weight: bold; margin-top: 20px;">ملاحظات أخرى</div>
+    <div style="background: #c9a15d; color: white; padding: 6px; font-weight: bold; margin-top: 10px;">ملاحظات أخرى</div>
     <div style="border: 1px solid #ccc; height: 100px; margin-top: 10px;">
         <div style="margin-top: 5px; min-height: 50px;">
         </div>

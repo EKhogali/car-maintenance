@@ -110,7 +110,7 @@ class MaintenanceRecordResource extends Resource
 
         Tables\Columns\TextColumn::make('cost')
             ->label(__('maintenance.cost'))
-            ->money('lyd'),
+    ->formatStateUsing(fn ($state) => number_format($state, 2) . ''),
 
         Tables\Columns\TextColumn::make('odometer_reading')
             ->label(__('maintenance.odometer')),

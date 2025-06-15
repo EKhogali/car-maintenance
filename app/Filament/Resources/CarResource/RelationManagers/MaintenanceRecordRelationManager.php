@@ -94,7 +94,7 @@ class MaintenanceRecordRelationManager extends RelationManager
 
             Tables\Columns\TextColumn::make('cost')
                 ->label(__('maintenance.cost'))
-                ->money('lyd')
+    ->formatStateUsing(fn ($state) => number_format($state, 2) . '')
                 ->sortable(),
 
             Tables\Columns\TextColumn::make('odometer_reading')
