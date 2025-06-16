@@ -18,6 +18,7 @@ class Car extends Model
         'color',
         'mileage',
         'customer_id',
+        'notes',
     ];
 
     public function customer()
