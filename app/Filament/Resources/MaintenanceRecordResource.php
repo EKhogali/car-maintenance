@@ -26,10 +26,19 @@ class MaintenanceRecordResource extends Resource
 {
     return $form->schema([
         Forms\Components\Select::make('car_id')
-            ->relationship('car', 'license_plate')
-            ->searchable()
-            ->required()
-            ->label(__('maintenance.car')),
+    ->label(__('maintenance.car'))
+    ->relationship('car', 'license_plate')
+    ->searchable()
+    ->preload() // هذا يجعلها تظهر كـ dropdown عند الفتح
+    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->license_plate} - {$record->model} - {$record->customer->name}")
+    ->getSearchResultsUsing(function (string $search) {
+        return \App\Models\Car::where('license_plate', 'like', "%{$search}%")
+            ->orWhere('model', 'like', "%{$search}%")
+            ->orWhereHas('customer', fn ($q) => $q->where('name', 'like', "%{$search}%"))
+            ->limit(10)
+            ->pluck('license_plate', 'id');
+    })
+    ->required(),
 
         Forms\Components\Select::make('mechanic_id')
             ->relationship('mechanic', 'name')
