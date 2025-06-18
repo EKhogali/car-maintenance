@@ -43,16 +43,17 @@ class MaintenanceRecordRelationManager extends RelationManager
                 ->preload()
                 ->label(__('maintenance.service_types'))
                 ->reactive()
-                ->afterStateUpdated(function ($state, callable $set) {
-                    // Fetch prices and calculate total
+                ->afterStateUpdated(function ($state, callable $set, callable $get) {
                     $total = ServiceType::whereIn('id', $state)->sum('price');
                     $set('cost', $total);
+                    $discount = $get('discount') ?? 0;
+                    $set('due', max(0, $total - $discount));
                 }),
 
             Forms\Components\TextInput::make('cost')
                 ->numeric()
-                ->prefix('LYD')
                 ->label(__('maintenance.cost'))
+                ->disabled()
                 ->dehydrated(true),
 
             Forms\Components\TextInput::make('discount')
@@ -61,7 +62,7 @@ class MaintenanceRecordRelationManager extends RelationManager
                 ->default(0)
                 ->prefix('LYD')
                 ->reactive()
-                ->afterStateUpdated(fn ($state, callable $set, callable $get) => 
+                ->afterStateUpdated(fn ($state, callable $set, callable $get) =>
                     $set('due', max(0, ($get('cost') ?? 0) - $state))
                 ),
 
@@ -94,7 +95,7 @@ class MaintenanceRecordRelationManager extends RelationManager
 
             Tables\Columns\TextColumn::make('cost')
                 ->label(__('maintenance.cost'))
-    ->formatStateUsing(fn ($state) => number_format($state, 2) . '')
+                ->formatStateUsing(fn ($state) => number_format($state, 2) . '')
                 ->sortable(),
 
             Tables\Columns\TextColumn::make('odometer_reading')
@@ -130,7 +131,7 @@ class MaintenanceRecordRelationManager extends RelationManager
     {
         $servicesCost = $record->serviceTypes()->sum('price');
         $partsCost = $record->partUsages->sum(fn($item) => $item->quantity * $item->unit_price);
-        $record->cost = $servicesCost + $partsCost;
+        $record->cost = $servicesCost + $partsCost ?? 0;
 
         // Apply discount
         $record->due = max(0, $record->cost - $record->discount);
