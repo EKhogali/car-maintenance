@@ -273,19 +273,19 @@ class MaintenanceRecordResource extends Resource
 
 
 
-        
-Html2MediaExportAction::make('print_internal_financial_summary')
-    ->label('تقرير مالي ')
-    // ->modal(false)
-    ->preview()
-    ->content(fn ($record) => view('internal-financial-summary', ['record' => $record])),
-
-
         Html2MediaExportAction::make('print')
         ->label('فاتورة الزبون')        
             // ->modal(false)
         ->preview()
         ->content(fn ($record) => view('customer-invoice', ['record' => $record])),
+
+
+        
+        Html2MediaExportAction::make('print_internal_financial_summary')
+            ->label('تقرير مالي ')
+            // ->modal(false)
+            ->preview()
+            ->content(fn ($record) => view('internal-financial-summary', ['record' => $record])),
 
 
     ])

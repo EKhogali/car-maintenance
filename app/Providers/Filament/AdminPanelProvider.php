@@ -30,8 +30,11 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => '#3e2f92',   // Deep Violet (main brand color)
+                'secondary' => '#c9a15d', // Gold/Bronze (accent color)
+                'gray' => '#e6e6e6',      // Light Gray (backgrounds, neutral)
             ])
+
             ->theme(asset('css/filament/admin/theme.css'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
