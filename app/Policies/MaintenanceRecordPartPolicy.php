@@ -2,18 +2,20 @@
 
 namespace App\Policies;
 
-use App\Models\MaintenanceRecordPart;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\MaintenanceRecordPart;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class MaintenanceRecordPartPolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->can('view_any_maintenance::record::part');
     }
 
     /**
@@ -21,7 +23,7 @@ class MaintenanceRecordPartPolicy
      */
     public function view(User $user, MaintenanceRecordPart $maintenanceRecordPart): bool
     {
-        return false;
+        return $user->can('view_maintenance::record::part');
     }
 
     /**
@@ -29,7 +31,7 @@ class MaintenanceRecordPartPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->can('create_maintenance::record::part');
     }
 
     /**
@@ -37,7 +39,7 @@ class MaintenanceRecordPartPolicy
      */
     public function update(User $user, MaintenanceRecordPart $maintenanceRecordPart): bool
     {
-        return false;
+        return $user->can('update_maintenance::record::part');
     }
 
     /**
@@ -45,22 +47,62 @@ class MaintenanceRecordPartPolicy
      */
     public function delete(User $user, MaintenanceRecordPart $maintenanceRecordPart): bool
     {
-        return false;
+        return $user->can('delete_maintenance::record::part');
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can bulk delete.
      */
-    public function restore(User $user, MaintenanceRecordPart $maintenanceRecordPart): bool
+    public function deleteAny(User $user): bool
     {
-        return false;
+        return $user->can('delete_any_maintenance::record::part');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determine whether the user can permanently delete.
      */
     public function forceDelete(User $user, MaintenanceRecordPart $maintenanceRecordPart): bool
     {
-        return false;
+        return $user->can('force_delete_maintenance::record::part');
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     */
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->can('force_delete_any_maintenance::record::part');
+    }
+
+    /**
+     * Determine whether the user can restore.
+     */
+    public function restore(User $user, MaintenanceRecordPart $maintenanceRecordPart): bool
+    {
+        return $user->can('restore_maintenance::record::part');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     */
+    public function restoreAny(User $user): bool
+    {
+        return $user->can('restore_any_maintenance::record::part');
+    }
+
+    /**
+     * Determine whether the user can replicate.
+     */
+    public function replicate(User $user, MaintenanceRecordPart $maintenanceRecordPart): bool
+    {
+        return $user->can('replicate_maintenance::record::part');
+    }
+
+    /**
+     * Determine whether the user can reorder.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('reorder_maintenance::record::part');
     }
 }

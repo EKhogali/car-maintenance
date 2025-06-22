@@ -13,8 +13,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Torgodly\Html2Media\Actions\Html2MediaAction;
+// use Torgodly\Html2Media\Actions\Html2MediaAction;
 use Torgodly\Html2Media\Tables\Actions\Html2MediaAction as Html2MediaExportAction;
+use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 
 class MaintenanceRecordResource extends Resource
 {
@@ -24,30 +25,107 @@ class MaintenanceRecordResource extends Resource
 
     public static function form(Form $form): Form
 {
+    
     return $form->schema([
+        Forms\Components\Section::make(__('car.plural_label'))
+        ->schema([
         Forms\Components\Select::make('car_id')
-    ->label(__('maintenance.car'))
-    ->relationship('car', 'license_plate')
-    ->searchable()
-    ->preload() // هذا يجعلها تظهر كـ dropdown عند الفتح
-    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->license_plate} - {$record->model} - {$record->customer->name}")
-    ->getSearchResultsUsing(function (string $search) {
-        return \App\Models\Car::where('license_plate', 'like', "%{$search}%")
-            ->orWhere('model', 'like', "%{$search}%")
-            ->orWhereHas('customer', fn ($q) => $q->where('name', 'like', "%{$search}%"))
-            ->limit(10)
-            ->pluck('license_plate', 'id');
-    })
-    ->required(),
+            ->label(__('maintenance.car'))
+            ->relationship('car', 'license_plate')
+            ->searchable()
+            ->preload()
+            ->createOptionForm([
+                Forms\Components\Select::make('customer_id')
+                    ->label(__('car.customer'))
+                    ->relationship('customer', 'name')
+                    ->searchable()
+                    ->required()
+                    ->preload()
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label(__('customer.name'))
+                            ->required()
+                            ->maxLength(100),
+
+                        Forms\Components\TextInput::make('phone')
+                            ->label(__('customer.phone'))
+                            ->required()
+                            ->maxLength(20),
+
+                        Forms\Components\TextInput::make('email')
+                            ->label(__('customer.email'))
+                            ->email()
+                            ->maxLength(100),
+
+                        Forms\Components\TextInput::make('city')
+                            ->label(__('customer.city'))
+                            ->required(),
+
+                        Forms\Components\TextInput::make('address')
+                            ->label(__('customer.address')),
+
+                        Forms\Components\TextInput::make('national_id')
+                            ->label(__('customer.national_id')),
+
+                        Forms\Components\Textarea::make('notes')
+                            ->label(__('customer.notes'))
+                            ->rows(3),
+                    ]),
+
+                Forms\Components\TextInput::make('make')
+                    ->label(__('car.make'))
+                    ->required(),
+
+                Forms\Components\TextInput::make('model')
+                    ->label(__('car.model'))
+                    ->required(),
+
+                Forms\Components\TextInput::make('year')
+                    ->label(__('car.year'))
+                    ->numeric()
+                    ->required(),
+
+                Forms\Components\TextInput::make('vin')
+                    ->label(__('car.vin'))
+                    ->required(),
+
+                Forms\Components\TextInput::make('license_plate')
+                    ->label(__('car.license_plate'))
+                    ->required(),
+
+                Forms\Components\TextInput::make('color')
+                    ->label(__('car.color')),
+
+                Forms\Components\TextInput::make('mileage')
+                    ->label(__('car.mileage'))
+                    ->numeric()
+                    ->default(0),
+
+                Forms\Components\TextInput::make('engine_type')
+                    ->label(__('car.engine_type')),
+
+                Forms\Components\TextInput::make('transmission')
+                    ->label(__('car.transmission')),
+
+                Forms\Components\Textarea::make('notes')
+                    ->label(__('car.notes'))
+                    ->rows(3),
+            ])
+            ->required()
+            ->preload(),
+            ])
+            ->columns(1),
+        // ----------------------
 
         Forms\Components\Select::make('mechanic_id')
             ->relationship('mechanic', 'name')
             ->searchable()
+            ->preload()
             ->label(__('maintenance.mechanic')),
 
         Forms\Components\DatePicker::make('service_date')
             ->required()
-                ->default(now())
+            ->default(now())
             ->label(__('maintenance.service_date')),
 
         Forms\Components\Select::make('payment_method')
@@ -57,7 +135,7 @@ class MaintenanceRecordResource extends Resource
                 '1' => 'بطاقة',
                 '2' => 'تحويل',
             ])
-            ->default('cash')
+            ->default('0')
             ->label(__('maintenance.payment_method'))
             ->native(false),
 
@@ -74,28 +152,57 @@ class MaintenanceRecordResource extends Resource
                 ->label('الفحص التفصيلي')
                 ->rows(4),
 
-        Forms\Components\Textarea::make('description')
-            ->label(__('maintenance.description')),
+                Forms\Components\Select::make('serviceTypes')
+                    ->multiple()
+                    ->relationship('serviceTypes', 'name')
+                    ->preload()
+                    ->label(__('maintenance.service_types'))
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        $total = \App\Models\ServiceType::whereIn('id', $state)->sum('price');
+                        $set('cost', $total);
+                        $set('due', max(0, $total - ($get('discount') ?? 0)));
+                    }),
+        // Forms\Components\Textarea::make('description')
+        //     ->label(__('maintenance.description')),
+            Forms\Components\TextInput::make('cost')
+                ->label(__('maintenance.cost'))
+                ->numeric()
+                ->prefix('د.ل')
+                ->disabled()
+                ->dehydrated(true),
 
-        Forms\Components\TextInput::make('cost')
-            ->numeric()
-            ->prefix('LYD')
-            ->label(__('maintenance.cost')),
+                Forms\Components\TextInput::make('discount')
+                    ->label(__('maintenance.discount'))
+                    ->numeric()
+                    ->default(0)
+                    ->prefix('LYD')
+                    ->reactive()
+                    ->afterStateUpdated(fn ($state, callable $set, callable $get) =>
+                        $set('due', max(0, ($get('cost') ?? 0) - $state))
+                ),
+
+                Forms\Components\TextInput::make('due')
+                    ->label(__('maintenance.due'))
+                    ->numeric()
+                    ->prefix('د.ل.')
+                    ->disabled()
+                    ->dehydrated(true),
+
+
+
 
         Forms\Components\DatePicker::make('next_due_date')
-            ->label(__('maintenance.next_due_date')),
+            ->label(__('maintenance.next_due_date'))
+            ->default(now()->addMonth()),
 
-        Forms\Components\Select::make('serviceTypes')
-            ->multiple()
-            ->relationship('serviceTypes', 'name')
-            ->searchable()
-            ->label(__('maintenance.service_types')),
     ]);
 }
 
     public static function table(Table $table): Table
 {
     return $table->columns([
+        Tables\Columns\TextColumn::make('id')
+            ->label(__('maintenance.id')),
         Tables\Columns\TextColumn::make('car.license_plate')
             ->label(__('maintenance.car')),
 
@@ -130,32 +237,57 @@ class MaintenanceRecordResource extends Resource
             ->query(fn ($query) => $query->whereDate('next_due_date', '<=', now())),
     ])
     ->actions([
-        Tables\Actions\ViewAction::make(),
+        // Tables\Actions\ViewAction::make(),
         Tables\Actions\EditAction::make(),
         Tables\Actions\DeleteAction::make(),
         
-        Tables\Actions\Action::make('view_check')
-            ->label('عرض الفحص')
-            ->icon('heroicon-o-eye')
-            ->modalHeading('تفاصيل الفحص')
-            ->modalSubheading(fn ($record) => 'للسيارة: ' . $record->car->make . ' - ' . $record->car->model)
-            ->modalContent(fn ($record) => view('components.modals.maintenance-check', compact('record')))
-            ->modalSubmitAction(false),
+            Tables\Actions\Action::make('edit_mechanic_pct')
+                ->label('نسبة الفني')
+                ->icon('heroicon-o-pencil')
+                ->form([
+                    Forms\Components\TextInput::make('mechanic_pct')
+                        ->label('نسبة الفني (%)')
+                        ->numeric()
+                        ->minValue(0)
+                        ->maxValue(100)
+                        ->suffix('%')
+                        ->required()
+                        ->default(fn ($record) => $record->mechanic_pct), // ✅ Pre-fill current value
+                ])
+                ->action(function (MaintenanceRecord $record, array $data) {
+                    $record->mechanic_pct = $data['mechanic_pct'];
+                    $record->save();
+                })
+                ->modalHeading('نسبة الفني')
+                ->requiresConfirmation()
+                ->visible(fn () => in_array(auth()->id(), [1, 2, 3])),
+
+
+        Html2MediaAction::make('print_receive_form')
+            ->label('نموذج استلام سيارة')
+            // ->modal(false)
+            ->icon('heroicon-o-printer')
+            ->preview() // ✅ This works now
+            // ->content(fn ($record) => view('car-receive-form', ['car' => $record])),
+            ->content(fn ($record) => view('car-receive-form', ['car' => $record->car])),
+
+
+
+        
+Html2MediaExportAction::make('print_internal_financial_summary')
+    ->label('تقرير مالي ')
+    // ->modal(false)
+    ->preview()
+    ->content(fn ($record) => view('internal-financial-summary', ['record' => $record])),
+
 
         Html2MediaExportAction::make('print')
-        ->label('طباعة')
+        ->label('فاتورة الزبون')        
+            // ->modal(false)
         ->preview()
         ->content(fn ($record) => view('customer-invoice', ['record' => $record])),
 
-        // Html2MediaAction::make('print')
-        //     ->content(fn($record) => view('customer-invoice', ['record' => $record])),
 
-// Html2MediaExportAction::make('print')
-//             ->label('طباعة PDF')
-//             ->view('customer-invoice')
-//             ->filename(fn ($record) => 'invoice-' . $record->id),
-
-        // Tables\Actions\DeleteBulkAction::make(),
     ])
     ->defaultSort('service_date', 'desc');
 }
@@ -213,5 +345,14 @@ public static function getRelations(): array
     // Apply discount if set
     $record->due = max(0, $record->cost - ($record->discount ?? 0));
 }
+
+
+public static function beforeCreate(Form $form, Model $record): void
+{
+    if ($record->mechanic_id) {
+        $record->mechanic_pct = \App\Models\Mechanic::find($record->mechanic_id)?->work_pct ?? 0;
+    }
+}
+
 
 }

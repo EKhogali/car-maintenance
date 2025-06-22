@@ -1,70 +1,119 @@
-<div class="invoice p-6 text-sm leading-relaxed">
-    <h2 class="text-xl font-bold border-b pb-2 mb-4">فاتورة صيانة</h2>
+<div style="font-family: Arial, sans-serif; direction: rtl; color: #000; font-size: 14px; padding: 20px;">
 
-    <div class="mb-4">
-        <p><span class="font-semibold">العميل:</span> {{ $record->car->customer->name }}</p>
-        <p><span class="font-semibold">السيارة:</span> {{ $record->car->make }} - {{ $record->car->model }} - {{ $record->car->license_plate }}</p>
-        <p><span class="font-semibold">التاريخ:</span> {{ $record->service_date }}</p>
+<!-- Header -->
+<div style="display: flex; align-items: center; border-bottom: 2px solid #3e2f92; padding-bottom: 10px; margin-bottom: 20px;">
+    <img src="{{ asset('storage/logo.jpg') }}" alt="Aqssat Logo" style="width: 60px; height: auto; margin-left: 20px;">
+    <div>
+        <h2 style="margin: 0; color: #3e2f92;">شركة أقساط لبيع السيارات</h2>
+        <p style="margin: 0;">مركز الصيانة فرع جنزور</p>
     </div>
-
-    <div class="mb-4">
-        <h3 class="font-bold border-b mb-2">الخدمات:</h3>
-        <table class="w-full border-collapse">
-            <thead>
-                <tr>
-                    <th class="border p-2 text-right">الخدمة</th>
-                    <th class="border p-2 text-right">السعر</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($record->serviceTypes as $service)
-                    <tr>
-                        <td class="border p-2">{{ $service->name }}</td>
-                        <td class="border p-2">{{ number_format($service->price, 2) }} LYD</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-
-    <div class="mb-4">
-        <h3 class="font-bold border-b mb-2">القطع المستخدمة:</h3>
-        <table class="w-full border-collapse">
-            <thead>
-                <tr>
-                    <th class="border p-2 text-right">القطعة</th>
-                    <th class="border p-2 text-right">الكمية</th>
-                    <th class="border p-2 text-right">سعر الوحدة</th>
-                    <th class="border p-2 text-right">الإجمالي</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($record->partUsages as $usage)
-                    <tr>
-                        <td>{{ $usage->part->name }}</td>
-                        <td>{{ $usage->quantity }}</td>
-                        <td>{{ number_format($usage->unit_price, 2) }}</td>
-                        <td>{{ number_format($usage->quantity * $usage->unit_price, 2) }}</td>
-                    </tr>
-                @endforeach
-                <!-- @foreach ($record->partUsages as $usage)
-                    <tr>
-                        <td class="border p-2">{{ $usage->part->name }}</td>
-                        <td class="border p-2">{{ $usage->quantity }}</td>
-                        <td class="border p-2">{{ number_format($usage->unit_price, 2) }} </td>
-                        <td class="border p-2">{{ number_format($usage->quantity * $usage->unit_price, 2) }} </td>
-                    </tr>
-                @endforeach -->
-            </tbody>
-        </table>
-    </div>
-
-<div class="mt-6 border-t pt-4">
-    <p><span class="font-semibold">الإجمالي:</span> {{ number_format($record->cost, 2) }} </p>
-    <p><span class="font-semibold">الخصم:</span> {{ number_format($record->discount, 2) }} </p>
-    <p><span class="font-semibold">المبلغ المستحق:</span> {{ number_format($record->due, 2) }} </p>
-    <p><span class="font-semibold">الميكانيكي:</span> {{ $record->mechanic->name ?? '-' }}</p>
-    <p><span class="font-semibold">قراءة العداد:</span> {{ $record->odometer_reading }} كم</p>
 </div>
+
+
+    <!-- Title -->
+    <div style="background: #c9a15d; color: white; padding: 6px; font-weight: bold;">فاتورة صيانة</div>
+
+    <!-- Customer & Car Info -->
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <tr>
+            <td style="padding: 5px;"><strong>العميل:</strong></td>
+            <td style="padding: 5px;">{{ $record->car->customer->name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px;"><strong>السيارة:</strong></td>
+            <td style="padding: 5px;">{{ $record->car->make }} - {{ $record->car->model }} - {{ $record->car->license_plate }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px;"><strong>تاريخ الخدمة:</strong></td>
+            <td style="padding: 5px;">{{ $record->service_date }}</td>
+        </tr>
+    </table>
+
+    <!-- Services Table -->
+    <div style="background: #c9a15d; color: white; padding: 6px; font-weight: bold; margin-top: 20px;">الخدمات المقدمة</div>
+    <table style="width: 100%; border-collapse: collapse;" border="1">
+        <thead>
+            <tr style="background: #f8e4b8;">
+                <th style="padding: 6px;">الخدمة</th>
+                <th style="padding: 6px;">السعر</th>
+            </tr>
+        </thead>
+        <tbody>
+            @php
+                $serviceTotal = 0;
+            @endphp
+            @foreach ($record->serviceTypes as $service)
+                @php $serviceTotal += $service->price; @endphp
+                <tr>
+                    <td style="padding: 6px;">{{ $service->name }}</td>
+                    <td style="padding: 6px;">{{ number_format($service->price, 2) }} د.ل</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <!-- Parts Table (No Price) -->
+    <div style="background: #c9a15d; color: white; padding: 6px; font-weight: bold; margin-top: 20px;">القطع المستخدمة</div>
+    <table style="width: 100%; border-collapse: collapse;" border="1">
+        <thead>
+            <tr style="background: #f8e4b8;">
+                <th style="padding: 6px;">القطعة</th>
+                <th style="padding: 6px;">الكمية</th>
+            </tr>
+        </thead>
+        <tbody>
+            @php
+                $partsTotal = 0;
+            @endphp
+            @foreach ($record->partUsages as $usage)
+                @php
+                    $partsTotal += $usage->quantity * $usage->unit_price;
+                @endphp
+                <tr>
+                    <td style="padding: 6px;">{{ $usage->part->name }}</td>
+                    <td style="padding: 6px;">{{ $usage->quantity }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <!-- Totals -->
+    <div style="background: #f0f0f0; padding: 6px; font-weight: bold; margin-top: 20px;">الإجماليات</div>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+        <tr>
+            <td style="padding: 5px;"><strong>إجمالي الخدمات:</strong></td>
+            <td style="padding: 5px;">{{ number_format($serviceTotal, 2) }} د.ل</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px;"><strong>إجمالي القطع:</strong></td>
+            <td style="padding: 5px;">{{ number_format($partsTotal, 2) }} د.ل</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px;"><strong>الإجمالي:</strong></td>
+            <td style="padding: 5px;">{{ number_format($serviceTotal + $partsTotal, 2) }} د.ل</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px;"><strong>الخصم:</strong></td>
+            <td style="padding: 5px;">{{ number_format($record->discount, 2) }} د.ل</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px;"><strong>المبلغ المستحق:</strong></td>
+            <td style="padding: 5px;">{{ number_format($record->due, 2) }} د.ل</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px;"><strong>الميكانيكي:</strong></td>
+            <td style="padding: 5px;">{{ $record->mechanic->name ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px;"><strong>قراءة العداد:</strong></td>
+            <td style="padding: 5px;">{{ $record->odometer_reading }} كم</td>
+        </tr>
+    </table>
+
+<!-- Footer -->
+<div style="border-top: 1px solid #ccc; padding-top: 10px; font-size: 13px; text-align: center; margin-top: 40px; color: #3e2f92;">
+    www.aqssat.ly - aqssatcar@gmail.com - الهواتف: 0918043777 / 0928043777
+</div>
+
 
 </div>

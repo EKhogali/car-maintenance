@@ -47,6 +47,7 @@
     "customer.model_label": "زبون",
     "customer.plural_label": "الزبائن",
 
+    "maintenance.id": "رقم أمر الصيانة",
     "maintenance.car": "السيارة",
   "maintenance.mechanic": "الميكانيكي",
   "maintenance.service_date": "تاريخ الصيانة",
@@ -54,10 +55,11 @@
   "maintenance.description": "الوصف",
   "maintenance.cost": "التكلفة",
   "maintenance.next_due_date": "موعد الصيانة القادم",
-  "maintenance.service_types": "أنواع الخدمة",
+  "maintenance.service_types": "الخدمات",
   "maintenance.filter.due": "الصيانة المستحقة",
   "maintenance.discount": "الخصم",
   "maintenance.due": "المبلغ المستحق",
+  "maintenance.payment_method": "طريقة الدفع",
     
     "maintenance.navigation_label": "إدارة طلبات الصيانة",
     "maintenance.model_label": "طلب صيانة",

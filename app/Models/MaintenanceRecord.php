@@ -26,6 +26,7 @@ class MaintenanceRecord extends Model
         'status',
         'next_service_date',
         'mileage_at_service',
+        'mechanic_pct',
     ];
 
     public function car()

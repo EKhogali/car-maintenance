@@ -1,14 +1,15 @@
 
 <div style="font-family: Arial, sans-serif; direction: rtl; margin: 40px; color: #000; font-size: 14px;">
 
-    <!-- Header -->
-    <div style="display: flex; align-items: center; border-bottom: 1px solid #c9a15d; padding-bottom: 10px; margin-bottom: 20px;">
-        <img src="{{ asset('storage/logo.jpg') }}" style="width: 60px; height: auto; margin-left: 20px; display: inline-block;">
-        <div>
-            <h2 style="margin: 0;">مركز أقساط لصيانة السيارات</h2>
-            <p style="margin: 0;">0918043777</p>
-        </div>
+<!-- Header -->
+<div style="display: flex; align-items: center; border-bottom: 2px solid #3e2f92; padding-bottom: 10px; margin-bottom: 20px;">
+    <img src="{{ asset('storage/logo.jpg') }}" alt="Aqssat Logo" style="width: 60px; height: auto; margin-left: 20px;">
+    <div>
+        <h2 style="margin: 0; color: #3e2f92;">شركة أقساط لبيع السيارات</h2>
+        <p style="margin: 0;">مركز الصيانة فرع جنزور</p>
     </div>
+</div>
+
 
     <!-- Car Info -->
     <div style="background: #c9a15d; color: white; padding: 6px; font-weight: bold;">استمارة فحص السيارة</div>
