@@ -15,12 +15,12 @@
 <!-- Customer & Car Info -->
 <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
     <tr>
-        <td style="padding: 5px;"><strong>العميل:</strong></td>
+        <td style="padding: 5px;"><strong>الزبون:</strong></td>
         <td style="padding: 5px;">{{ $record->car->customer->name }}</td>
     </tr>
     <tr>
         <td style="padding: 5px;"><strong>السيارة:</strong></td>
-        <td style="padding: 5px;">{{ $record->car->make }} - {{ $record->car->model }} - {{ $record->car->license_plate }}</td>
+        <td style="padding: 5px;">{{ $record->car->make }} - {{ $record->car->model }} -  <br> {{ $record->car->license_plate }}</td>
     </tr>
     <tr>
         <td style="padding: 5px;"><strong>تاريخ الخدمة:</strong></td>
@@ -81,6 +81,20 @@
 <!-- Totals -->
 <div style="background: #f0f0f0; padding: 6px; font-weight: bold; margin-top: 20px;">الإجماليات</div>
 <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+
+    @if($record->advance_payment > 0)
+        <tr>
+            <td><strong>الدفعة المقدمة:</strong></td>
+            <td>{{ number_format($record->advance_payment, 2) }} د.ل</td>
+        </tr>
+        <!-- @if($record->advance_payment_note)
+            <tr>
+                <td><strong>ملاحظة الدفع المقدم:</strong></td>
+                <td>{{ $record->advance_payment_note }}</td>
+            </tr>
+        @endif -->
+    @endif
+
     <tr>
         <td style="padding: 5px;"><strong>إجمالي الخدمات:</strong></td>
         <td style="padding: 5px;">{{ number_format($serviceTotal, 2) }} د.ل</td>

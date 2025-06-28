@@ -29,6 +29,8 @@ class MaintenanceRecordPartResource extends Resource
                 ->preload()
                 ->required(),
 
+                
+
             Forms\Components\Select::make('part_id')
                 ->label('القطعة')
                 ->relationship('part', 'name')

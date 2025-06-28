@@ -27,6 +27,8 @@ class MaintenanceRecord extends Model
         'next_service_date',
         'mileage_at_service',
         'mechanic_pct',
+    'advance_payment',
+    'advance_payment_note',
     ];
 
     public function car()
@@ -38,10 +40,10 @@ class MaintenanceRecord extends Model
     {
         return $this->belongsTo(Mechanic::class);
     }
-    public function serviceTypes()
-    {
-        return $this->belongsToMany(ServiceType::class);
-    }
+    // public function serviceTypes()
+    // {
+    //     return $this->belongsToMany(ServiceType::class);
+    // }
     public function partUsages()
     {
         return $this->hasMany(MaintenanceRecordPart::class);
@@ -57,6 +59,16 @@ class MaintenanceRecord extends Model
     return $this->usedParts->sum(fn ($usage) => $usage->quantity * $usage->unit_price);
 }
 
+public function serviceTypes()
+{
+    return $this->belongsToMany(ServiceType::class)
+                ->withPivot('price')
+                ;
+}
 
+public function services()
+{
+    return $this->hasMany(MaintenanceRecordServiceType::class);
+}
   
 }
