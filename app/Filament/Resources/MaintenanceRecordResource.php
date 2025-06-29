@@ -183,82 +183,74 @@ class MaintenanceRecordResource extends Resource
                 ->columns(1),
 
 
-            // Forms\Components\Select::make('serviceTypes')
-            //     ->multiple()
-            //     ->relationship('serviceTypes', 'name')
-            //     ->preload()
-            //     ->label(__('maintenance.service_types'))
-            //     ->afterStateUpdated(function ($state, callable $set, callable $get) {
-            //         $total = \App\Models\ServiceType::whereIn('id', $state)->sum('price');
-            //         $set('cost', $total);
-            //         $set('due', max(0, $total - ($get('discount') ?? 0)));
-            //     }),
-
-            Forms\Components\Repeater::make('services')
-                ->label('الخدمات')
-                ->relationship('services') // ← hasMany to pivot model
+            Forms\Components\Section::make(__('حسابات الصيانة'))
                 ->schema([
-                    Forms\Components\Select::make('service_type_id')
-                        ->label('الخدمة')
-                        ->options(\App\Models\ServiceType::pluck('name', 'id'))
-                        ->required()
+                    Forms\Components\Repeater::make('services')
+                        ->label('الخدمات')
+                        ->relationship('services') // ← hasMany to pivot model
+                        ->schema([
+                            Forms\Components\Select::make('service_type_id')
+                                ->label('الخدمة')
+                                ->options(\App\Models\ServiceType::pluck('name', 'id'))
+                                ->required()
+                                ->reactive()
+                                ->afterStateUpdated(
+                                    fn($state, callable $set) =>
+                                    $set('price', \App\Models\ServiceType::find($state)?->price ?? 0)
+                                ),
+
+                            Forms\Components\TextInput::make('price')
+                                ->label('السعر')
+                                ->numeric()
+                                ->required(),
+                        ])
+                        ->columns(2)
+                        ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                            $total = collect($state)->sum('price');
+                            $set('cost', $total);
+                            $set('due', max(
+                                0,
+                                $total
+                                - ($get('discount') ?? 0)
+                                - ($get('advance_payment') ?? 0)
+                            ));
+                        }),
+
+
+                    // Forms\Components\Textarea::make('description')
+                    //     ->label(__('maintenance.description')),
+                    Forms\Components\TextInput::make('cost')
+                        ->label(__('maintenance.cost'))
+                        ->numeric()
+                        ->prefix('د.ل')
+                        ->disabled()
+                        ->reactive()
+                        ->dehydrated(true),
+
+                    Forms\Components\TextInput::make('discount')
+                        ->label(__('maintenance.discount'))
+                        ->numeric()
+                        ->default(0)
+                        ->prefix('د.ل.')
                         ->reactive()
                         ->afterStateUpdated(
-                            fn($state, callable $set) =>
-                            $set('price', \App\Models\ServiceType::find($state)?->price ?? 0)
+                            fn($state, callable $set, callable $get) =>
+                            $set('due', max(0, ($get('cost') ?? 0) - $state - ($get('advance_payment') ?? 0)))
                         ),
 
-                    Forms\Components\TextInput::make('price')
-                        ->label('السعر')
+                    Forms\Components\TextInput::make('due')
+                        ->label(__('maintenance.due'))
                         ->numeric()
-                        ->required(),
+                        ->prefix('د.ل.')
+                        ->disabled()
+                        ->reactive()
+                        ->dehydrated(true)
+                        ->afterStateHydrated(function (callable $set, $state, callable $get) {
+                            $set('due', max(0, ($get('cost') ?? 0) - ($get('discount') ?? 0) - ($get('advance_payment') ?? 0)));
+                        }),
+
                 ])
-                ->columns(2)
-                ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                    $total = collect($state)->sum('price');
-                    $set('cost', $total);
-                    $set('due', max(
-                        0,
-                        $total
-                        - ($get('discount') ?? 0)
-                        - ($get('advance_payment') ?? 0)
-                    ));
-                }),
-
-
-            // Forms\Components\Textarea::make('description')
-            //     ->label(__('maintenance.description')),
-            Forms\Components\TextInput::make('cost')
-                ->label(__('maintenance.cost'))
-                ->numeric()
-                ->prefix('د.ل')
-                ->disabled()
-                ->reactive()
-                ->dehydrated(true),
-
-            Forms\Components\TextInput::make('discount')
-                ->label(__('maintenance.discount'))
-                ->numeric()
-                ->default(0)
-                ->prefix('د.ل.')
-                ->reactive()
-                ->afterStateUpdated(
-                    fn($state, callable $set, callable $get) =>
-                    $set('due', max(0, ($get('cost') ?? 0) - $state - ($get('advance_payment') ?? 0)))
-                ),
-
-            Forms\Components\TextInput::make('due')
-                ->label(__('maintenance.due'))
-                ->numeric()
-                ->prefix('د.ل.')
-                ->disabled()
-                ->reactive()
-                ->dehydrated(true)
-                ->afterStateHydrated(function (callable $set, $state, callable $get) {
-                    $set('due', max(0, ($get('cost') ?? 0) - ($get('discount') ?? 0) - ($get('advance_payment') ?? 0)));
-                }),
-
-
+                ->columns(1),
 
 
             Forms\Components\DatePicker::make('next_due_date')
@@ -294,14 +286,57 @@ class MaintenanceRecordResource extends Resource
                     default => $state,
                 }),
 
+
             Tables\Columns\TextColumn::make('cost')
                 ->label(__('maintenance.cost'))
-                ->formatStateUsing(fn($state) => number_format($state, 2) . ''),
+                ->formatStateUsing(fn($state) => number_format($state, 2) . ' د.ل'),
+
+            Tables\Columns\TextColumn::make('discount')
+                ->label(__('maintenance.discount'))
+                ->formatStateUsing(fn($state) => number_format($state, 2) . ' د.ل'),
 
             Tables\Columns\TextColumn::make('advance_payment')
                 ->label(__('maintenance.advance_payment'))
-                ->formatStateUsing(fn($state) => number_format($state, 2) . '')
-            ,
+                ->formatStateUsing(fn($state) => number_format($state, 2) . ' د.ل'),
+
+            Tables\Columns\TextColumn::make('due')
+                ->label(__('maintenance.due'))
+                ->formatStateUsing(fn($state) => number_format($state, 2) . ' د.ل'),
+
+            Tables\Columns\TextColumn::make('parts_total')
+                ->label('قيمة القطع')
+                ->formatStateUsing(
+                    fn($state, $record) =>
+                    number_format($record->partUsages->sum(fn($usage) => $usage->quantity * $usage->unit_price), 2) . ' د.ل'
+                ),
+
+            Tables\Columns\TextColumn::make('mechanic_pct')
+                ->label('نسبة الفني')
+                ->formatStateUsing(fn($state) => $state ? $state . '%' : '--'),
+
+            Tables\Columns\TextColumn::make('mechanic_amount')
+                ->label('مستحق الفني')
+                ->formatStateUsing(
+                    fn($state, $record) =>
+                    $record->mechanic_pct
+                    ? number_format($record->cost * $record->mechanic_pct / 100, 2) . ' د.ل'
+                    : '--'
+                ),
+
+            Tables\Columns\TextColumn::make('company_amount')
+                ->label('نصيب الشركة')
+                ->formatStateUsing(fn($state, $record) => number_format(
+                    $record->cost - ($record->mechanic_pct ? ($record->cost * $record->mechanic_pct / 100) : 0),
+                    2
+                ) . ' د.ل'),
+
+            // Tables\Columns\TextColumn::make('cost')
+            //     ->label(__('maintenance.cost'))
+            //     ->formatStateUsing(fn($state) => number_format($state, 2) . ''),
+
+            // Tables\Columns\TextColumn::make('advance_payment')
+            //     ->label(__('maintenance.advance_payment'))
+            //     ->formatStateUsing(fn($state) => number_format($state, 2) . ''),
 
             Tables\Columns\TextColumn::make('odometer_reading')
                 ->label(__('maintenance.odometer')),
@@ -364,7 +399,8 @@ class MaintenanceRecordResource extends Resource
 
 
             ])
-            ->defaultSort('service_date', 'desc');
+            ->defaultSort('id', 'desc');
+        // ->defaultSort('service_date', 'desc');
     }
 
     public static function getRelations(): array
