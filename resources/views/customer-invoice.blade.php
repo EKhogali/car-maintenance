@@ -87,18 +87,6 @@
 <div style="background: #f0f0f0; padding: 6px; font-weight: bold; margin-top: 20px;">الإجماليات</div>
 <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
 
-    @if($record->advance_payment > 0)
-        <tr>
-            <td><strong>الدفعة المقدمة:</strong></td>
-            <td>{{ number_format($record->advance_payment, 2) }} د.ل</td>
-        </tr>
-        <!-- @if($record->advance_payment_note)
-            <tr>
-                <td><strong>ملاحظة الدفع المقدم:</strong></td>
-                <td>{{ $record->advance_payment_note }}</td>
-            </tr>
-        @endif -->
-    @endif
 
     <tr>
         <td style="padding: 5px;"><strong>إجمالي الخدمات:</strong></td>
@@ -109,17 +97,31 @@
         <td style="padding: 5px;">{{ number_format($partsTotal, 2) }} د.ل</td>
     </tr>
     <tr>
+        <td style="padding: 5px;"><strong>المجموع الفرعي:</strong></td>
+        <td style="padding: 5px;">{{ number_format($serviceTotal + $partsTotal, 2) }} د.ل</td>
+    </tr>
+    <tr>
         <td style="padding: 5px;"><strong>الخصم:</strong></td>
         <td style="padding: 5px;">{{ number_format($record->discount, 2) }} د.ل</td>
     </tr>
     <tr>
-        <td style="padding: 5px;"><strong>الإجمالي:</strong></td>
-        <td style="padding: 5px;">{{ number_format($serviceTotal + $partsTotal, 2) }} د.ل</td>
+        <td style="padding: 5px; background: #c9a15d; color: white;"><strong>الإجمالي بعد الخصم:</strong></td>
+        <td style="padding: 5px; background: #c9a15d; color: white;">{{ number_format(($serviceTotal + $partsTotal) - $record->discount, 2) }} د.ل</td>
     </tr>
+    @if($record->advance_payment > 0)
+        <tr>
+            <td style="padding: 5px;"><strong>الدفعة المقدمة:</strong></td>
+            <td style="padding: 5px;">{{ number_format($record->advance_payment, 2) }} د.ل</td>
+        </tr>
+    @endif
     <tr>
-        <td style="padding: 5px;"><strong>المبلغ المستحق:</strong></td>
-        <td style="padding: 5px;">{{ number_format($record->due, 2) }} د.ل</td>
+        <td style="padding: 5px; background: #3e2f92; color: white;"><strong>المبلغ المتبقي:</strong></td>
+        <td style="padding: 5px; background: #3e2f92; color: white;">
+            {{ number_format(($serviceTotal + $partsTotal) - $record->discount - $record->advance_payment, 2) }} د.ل
+        </td>
     </tr>
+
+
     <tr>
         <td style="padding: 5px;"><strong>الميكانيكي:</strong></td>
         <td style="padding: 5px;">{{ $record->mechanic->name ?? '-' }}</td>
