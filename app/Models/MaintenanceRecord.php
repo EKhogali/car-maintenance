@@ -70,5 +70,10 @@ public function services()
 {
     return $this->hasMany(MaintenanceRecordServiceType::class);
 }
+
+public function scopeDueSoon($query)
+{
+    return $query->whereDate('next_due_date', '<=', now()->addDays(3));
+}
   
 }

@@ -20,7 +20,12 @@
     </tr>
     <tr>
         <td style="padding: 5px;"><strong>السيارة:</strong></td>
-        <td style="padding: 5px;">{{ $record->car->make }} - {{ $record->car->model }} -  <br> {{ $record->car->license_plate }}</td>
+        <!-- <td style="padding: 5px;">{{ $record->car->make }} - {{ $record->car->model }} -  <br> {{ $record->car->license_plate }}</td> -->
+         <td style="padding: 5px;">
+    {{ $record->car->make }} - {{ $record->car->model }} - {{ $record->car->vin }}<br>
+    رقم اللوحة: {{ $record->car->license_plate }}
+</td>
+
     </tr>
     <tr>
         <td style="padding: 5px;"><strong>تاريخ الخدمة:</strong></td>
@@ -100,16 +105,16 @@
         <td style="padding: 5px;">{{ number_format($serviceTotal, 2) }} د.ل</td>
     </tr>
     <tr>
-        <td style="padding: 5px;"><strong>إجمالي القطع:</strong></td>
+        <td style="padding: 5px;"><strong>إجمالي قطع الغيار:</strong></td>
         <td style="padding: 5px;">{{ number_format($partsTotal, 2) }} د.ل</td>
-    </tr>
-    <tr>
-        <td style="padding: 5px;"><strong>الإجمالي:</strong></td>
-        <td style="padding: 5px;">{{ number_format($serviceTotal + $partsTotal, 2) }} د.ل</td>
     </tr>
     <tr>
         <td style="padding: 5px;"><strong>الخصم:</strong></td>
         <td style="padding: 5px;">{{ number_format($record->discount, 2) }} د.ل</td>
+    </tr>
+    <tr>
+        <td style="padding: 5px;"><strong>الإجمالي:</strong></td>
+        <td style="padding: 5px;">{{ number_format($serviceTotal + $partsTotal, 2) }} د.ل</td>
     </tr>
     <tr>
         <td style="padding: 5px;"><strong>المبلغ المستحق:</strong></td>
@@ -126,8 +131,12 @@
 </table>
 
 <!-- Footer -->
-<div style="border-top: 1px solid #ccc; padding-top: 10px; font-size: 13px; text-align: center; margin-top: 40px; color: #3e2f92;">
-    www.aqssat.ly - aqssatcar@gmail.com - الهواتف: 0918043777 / 0928043777
+<div style="border-top: 1px solid #ccc; padding-top: 12px; font-size: 13px; text-align: center; margin-top: 40px; color: #3e2f92; line-height: 1.8;">
+    <div>الموقع الإلكتروني: www.aqssat.ly</div>
+    <div>البريد الإلكتروني: cars@aqssat.ly</div>
+    <div>الهـواتف: 0918043777 / 0928043777</div>
+    <div style="color: #888;">{{ now()->format('Y-m-d H:i:s') }}</div>
 </div>
+
 
 </div>

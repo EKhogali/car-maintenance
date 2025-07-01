@@ -32,6 +32,13 @@ class MaintenanceRecordResource extends Resource
         return $form->schema([
             Forms\Components\Section::make(__('car.plural_label'))
                 ->schema([
+                    Forms\Components\Placeholder::make('record_id')
+                        ->label('رقم السجل (للربط مع قطع الغيار)')
+                        ->content(fn($record) => $record?->id)
+                        ->visible(fn($record) => filled($record?->id))
+                        ->columnSpanFull(),
+
+
                     Forms\Components\Select::make('car_id')
                         ->label(__('maintenance.car'))
                         ->relationship('car', 'license_plate')
@@ -174,9 +181,8 @@ class MaintenanceRecordResource extends Resource
                             $set('due', max(0, ($get('cost') ?? 0) - ($get('discount') ?? 0) - $state))
                         ),
 
-                    Forms\Components\Textarea::make('advance_payment_note')
+                    Forms\Components\TextInput::make('advance_payment_note')
                         ->label(__('maintenance.advance_payment_note'))
-                        ->rows(2)
                         ->maxLength(255)
                         ->placeholder('أدخل ملاحظة عن الدفعة مثل طريقة الدفع أو رقم الإيصال'),
                 ])
@@ -189,15 +195,42 @@ class MaintenanceRecordResource extends Resource
                         ->label('الخدمات')
                         ->relationship('services') // ← hasMany to pivot model
                         ->schema([
-                            Forms\Components\Select::make('service_type_id')
+                            // Forms\Components\Select::make('service_type_id')
+                            //     ->label('الخدمة')
+                            //     ->options(\App\Models\ServiceType::pluck('name', 'id'))
+                            //     ->required()
+                            //     ->reactive()
+                            //     ->searchable()
+                            //     ->afterStateUpdated(
+                            //         fn($state, callable $set) =>
+                            //         $set('price', \App\Models\ServiceType::find($state)?->price ?? 0)
+                            //     ),
+
+                            Select::make('service_type_id')
                                 ->label('الخدمة')
                                 ->options(\App\Models\ServiceType::pluck('name', 'id'))
+                                ->searchable()
                                 ->required()
+                                ->createOptionForm([                 // 👈 add-new-service UI
+                                    TextInput::make('name')
+                                        ->label('اسم الخدمة')
+                                        ->required()
+                                        ->maxLength(100),
+
+                                    TextInput::make('description')
+                                        ->label('وصف'),
+
+                                    TextInput::make('price')
+                                        ->label('السعر الافتراضي')
+                                        ->numeric()
+                                        ->required(),
+                                ])
                                 ->reactive()
                                 ->afterStateUpdated(
-                                    fn($state, callable $set) =>
+                                    fn($state, $set) =>
                                     $set('price', \App\Models\ServiceType::find($state)?->price ?? 0)
                                 ),
+
 
                             Forms\Components\TextInput::make('price')
                                 ->label('السعر')
@@ -279,6 +312,7 @@ class MaintenanceRecordResource extends Resource
                 ->label(__('maintenance.payment_method'))
                 ->sortable()
                 ->searchable()
+                ->toggleable()
                 ->formatStateUsing(fn(string $state) => match ($state) {
                     '0' => 'نقدي',
                     '1' => 'بطاقة',
@@ -351,6 +385,18 @@ class MaintenanceRecordResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
 
+                // Tables\Actions\Action::make('manage_parts')
+                //     ->label('قطع الغيار')
+                //     ->icon('heroicon-o-wrench')
+                //     ->url(
+                //         fn($record) =>
+                //         \App\Filament\Resources\MaintenanceRecordPartResource::getUrl('index', [
+                //             'ownerRecord' => $record->id,   // pass current maintenance record
+                //         ])
+                //     )
+                //     ->openUrlInNewTab(),   // optional: open in a new tab
+
+
                 Tables\Actions\Action::make('edit_mechanic_pct')
                     ->label('نسبة الفني')
                     ->icon('heroicon-o-pencil')
@@ -389,6 +435,16 @@ class MaintenanceRecordResource extends Resource
                     ->preview()
                     ->content(fn($record) => view('customer-invoice', ['record' => $record])),
 
+                Html2MediaExportAction::make('print_mechanic_invoice')
+                    ->label('فاتورة الفني')
+                    ->icon('heroicon-o-document-text')
+                    ->preview()                                // lets the user see before printing
+                    ->visible(fn($record) => filled($record->mechanic_id))
+                    ->content(fn($record) => view('mechanic-invoice', [
+                        'record' => $record,
+                        'mechanicPct' => $record->mechanic_pct
+                            ?: ($record->mechanic?->work_pct ?? 0), // fallback to mechanic default
+                    ])),
 
 
                 Html2MediaExportAction::make('print_internal_financial_summary')
@@ -465,5 +521,13 @@ class MaintenanceRecordResource extends Resource
         }
     }
 
+
+// MaintenanceRecord.php
+
+
+public static function getNavigationBadge(): ?string
+{
+    return (string) MaintenanceRecord::dueSoon()->count();
+}
 
 }
