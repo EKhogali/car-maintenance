@@ -131,11 +131,44 @@ class MaintenanceRecordResource extends Resource
 
 
 
+            // Forms\Components\Select::make('mechanic_id')
+            //     ->relationship('mechanic', 'name')
+            //     ->searchable()
+            //     ->preload()
+            //     ->label(__('maintenance.mechanic')),
+
+            // ②  Update the <select> for the mechanic so it refreshes that field
             Forms\Components\Select::make('mechanic_id')
                 ->relationship('mechanic', 'name')
                 ->searchable()
                 ->preload()
-                ->label(__('maintenance.mechanic')),
+                ->label(__('maintenance.mechanic'))
+                ->reactive()                                        // ← required for afterStateUpdated
+                ->afterStateUpdated(function ($state, $set, $get) {
+                    $defaultPct = \App\Models\Mechanic::find($state)?->work_pct ?? 0;
+
+                    // If the current value is still the previous default (i.e. not edited manually),
+                    // update it; otherwise leave the manually-overridden value alone.
+                    $wasManual = ($get('mechanic_pct') ?? null) !== ($get('mechanic_default_pct') ?? null);
+
+                    if (!$wasManual) {
+                        $set('mechanic_pct', $defaultPct);
+                    }
+
+                    // remember the new default for next time
+                    $set('mechanic_default_pct', $defaultPct);
+                }),
+
+
+            Forms\Components\TextInput::make('mechanic_pct')
+                ->label('نسبة الفني (%)')
+                ->numeric()
+                ->suffix('%')
+                ->disabled()          // show-only
+                ->dehydrated(true),   // still gets saved with the record
+
+            // (optional) tiny helper field – stays in Livewire only, never saved:
+            Forms\Components\Hidden::make('mechanic_default_pct')->dehydrated(false),
 
             Forms\Components\DatePicker::make('service_date')
                 ->required()
@@ -522,12 +555,12 @@ class MaintenanceRecordResource extends Resource
     }
 
 
-// MaintenanceRecord.php
+    // MaintenanceRecord.php
 
 
-public static function getNavigationBadge(): ?string
-{
-    return (string) MaintenanceRecord::dueSoon()->count();
-}
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) MaintenanceRecord::dueSoon()->count();
+    }
 
 }
