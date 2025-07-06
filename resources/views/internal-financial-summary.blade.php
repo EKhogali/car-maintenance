@@ -27,6 +27,8 @@
     $supervisorAmount = round(($serviceTotal + $paidPartsOnly) * $supervisorPct / 100, 2);
 
     $companyAmount = max(0, ($advance + $remained) - $mechanicAmount - $supervisorAmount);
+
+    $mechanicName = $record->mechanic->name ?? \App\Models\Mechanic::find($record->mechanic_id)?->name ?? '-';
 @endphp
 
 <!-- Breakdown -->
@@ -55,7 +57,7 @@
         </td>
     </tr>
     <tr>
-        <td style="padding:6px;"><strong>العميل:</strong></td>
+        <td style="padding:6px;"><strong>الزبون:</strong></td>
         <td style="padding:6px;" colspan="3">{{ $record->car->customer->name ?? '-' }}</td>
     </tr>
 </table>
@@ -95,7 +97,7 @@
     </thead>
     <tbody>
         <tr>
-            <td style="padding: 6px;">الفني ({{ $record->mechanic->name ?? '-' }}) من اجمالي الخدمات </td>
+            <td style="padding: 6px;">الفني ({{ $mechanicName ?? '-' }}) من اجمالي الخدمات </td>
             <td style="padding: 6px;">{{ number_format($mechanicPct, 2) }}%</td>
             <td style="padding: 6px;">{{ number_format($mechanicAmount, 2) }}</td>
         </tr>
