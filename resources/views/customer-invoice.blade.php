@@ -25,7 +25,8 @@
             <!-- <td style="padding: 5px;">{{ $record->car->make }} - {{ $record->car->model }} -  <br> {{ $record->car->license_plate }}</td> -->
             <td style="padding: 5px;">
                 {{ $record->car->make }} - {{ $record->car->model }} - {{ $record->car->vin }}<br>
-                رقم اللوحة: {{ $record->car->license_plate }}
+                رقم اللوحة: {{ $record->car->license_plate }}<br>
+                قراءة العداد: {{ $record->car->odometer_reading }}
             </td>
 
         </tr>
@@ -133,10 +134,10 @@
             <td style="padding: 5px;"><strong>الميكانيكي:</strong></td>
             <td style="padding: 5px;">{{ $record->mechanic->name ?? '-' }}</td>
         </tr>
-        <tr>
+        <!-- <tr>
             <td style="padding: 5px;"><strong>قراءة العداد:</strong></td>
             <td style="padding: 5px;">{{ $record->odometer_reading }} كم</td>
-        </tr>
+        </tr> -->
     </table>
 
     <!-- Footer -->
