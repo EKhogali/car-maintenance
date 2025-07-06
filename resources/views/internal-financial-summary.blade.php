@@ -31,6 +31,36 @@
 
 <!-- Breakdown -->
 <div style="background: #f0f0f0; padding: 8px; font-weight: bold;">تقرير مالي</div>
+
+<!-- Maintenance Record Info -->
+<table style="width:100%; border-collapse:collapse; margin-bottom: 20px;">
+    <tr>
+        <td style="padding:6px;"><strong>رقم الصيانة:</strong></td>
+        <td style="padding:6px;">{{ $record->id }}</td>
+        <td style="padding:6px;"><strong>تاريخ الخدمة:</strong></td>
+        <td style="padding:6px;">{{ $record->service_date }}</td>
+    </tr>
+    <tr>
+        <td style="padding:6px;"><strong>الفني:</strong></td>
+        <td style="padding:6px;">{{ $record->mechanic->name ?? '-' }}</td>
+        <td style="padding:6px;"><strong>نسبة الفني:</strong></td>
+        <td style="padding:6px;">{{ $record->mechanic_pct }}%</td>
+    </tr>
+    <tr>
+        <td style="padding:6px;"><strong>السيارة:</strong></td>
+        <td style="padding:6px;" colspan="3">
+            {{ $record->car->make }} {{ $record->car->model }} -
+            {{ $record->car->license_plate }}<br>
+            VIN: {{ $record->car->vin }}
+        </td>
+    </tr>
+    <tr>
+        <td style="padding:6px;"><strong>العميل:</strong></td>
+        <td style="padding:6px;" colspan="3">{{ $record->car->customer->name ?? '-' }}</td>
+    </tr>
+</table>
+
+
 <table style="width: 100%; border-collapse: collapse; margin-top: 10px;" border="1">
     <thead style="background: #f8e4b8;">
         <tr>
