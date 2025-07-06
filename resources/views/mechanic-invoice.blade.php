@@ -11,13 +11,13 @@
 <div style="font-family: Arial, sans-serif; direction: rtl; color:#000; font-size:14px; padding:20px;">
 
     {{-- Header --}}
-    <div style="display:flex; align-items:center; border-bottom:2px solid #3e2f92; padding-bottom:10px; margin-bottom:20px;">
-        <!-- <img src="{{ asset('storage/logo.jpg') }}" alt="logo" style="width:90px; height:auto; margin-left:25px;"> {{-- ✅ Maximized --}} -->
+    <!-- <div style="display:flex; align-items:center; border-bottom:2px solid #3e2f92; padding-bottom:10px; margin-bottom:20px;">
+        <img src="{{ asset('storage/logo.jpg') }}" alt="logo" style="width:90px; height:auto; margin-left:25px;"> {{-- ✅ Maximized --}}
         <div>
             <h2 style="margin:0; color:#3e2f92;">شركة أقساط لبيع السيارات</h2>
             <p style="margin:0;">مركز الصيانة فرع جنزور</p>
         </div>
-    </div>
+    </div> -->
 
     {{-- Title --}}
     <h3 style="text-align:center; margin:0 0 15px; background:#c9a15d; color:#fff; padding:6px;">فاتورة فني الصيانة</h3>
