@@ -84,7 +84,7 @@
         </tr>
         <tr>
             <td style="padding:5px;"><strong>الخصم:</strong></td>
-            <td style="padding:5px;">{{ number_format($$record->discount,2) }} د.ل</td>
+            <td style="padding:5px;">{{ number_format($record->discount,2) }} د.ل</td>
         </tr>
         <tr>
             <td style="padding:5px;"><strong>إجمالي بعد الخصم:</strong></td>
