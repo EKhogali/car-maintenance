@@ -24,7 +24,7 @@
             <td style="padding: 5px;">
                 {{ $record->car->make }} - {{ $record->car->model }} - {{ $record->car->vin }}<br>
                 رقم اللوحة: {{ $record->car->license_plate }}<br>
-                قراءة العداد: {{ $record->car->odometer_reading }}
+                قراءة العداد: {{ $record->odometer_reading }}
             </td>
 
         </tr>
@@ -89,7 +89,7 @@
 
 
     <!-- Totals -->
-    <div style="background: #f0f0f0; padding: 6px; font-weight: bold; margin-top: 20px;">الإجماليات</div>
+    <div style="background: #f0f0f0; padding: 6px; font-weight: bold; margin-top: 20px;">الإجمالي</div>
     <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
 
 
