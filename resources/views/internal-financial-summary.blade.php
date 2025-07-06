@@ -1,35 +1,36 @@
 <div style="font-family: Arial, sans-serif; direction: rtl; color: #000; font-size: 14px; padding: 20px;">
 
 <!-- Header -->
-<div style="display: flex; align-items: center; border-bottom: 2px solid #3e2f92; padding-bottom: 10px; margin-bottom: 20px;">
-    <img src="{{ asset('storage/logo.jpg') }}" alt="Aqssat Logo" style="width: 60px; height: auto; margin-left: 20px;">
+<div style="display:flex; align-items:center; border-bottom:2px solid #3e2f92; padding-bottom:10px; margin-bottom:20px;">
+    <img src="{{ asset('storage/logo.jpg') }}" alt="logo" style="width:90px; height:auto; margin-left:25px;">
     <div>
-        <h2 style="margin: 0; color: #3e2f92;">شركة أقساط لبيع السيارات</h2>
-        <p style="margin: 0;">مركز الصيانة فرع جنزور</p>
+        <h2 style="margin:0; color:#3e2f92;">شركة أقساط لبيع السيارات</h2>
+        <p style="margin:0;">مركز الصيانة فرع جنزور</p>
     </div>
 </div>
 
 @php
-    $serviceTotal = $record->services->sum('price');
-    $partsTotal = $record->partUsages->sum(fn($usage) => $usage->unit_price * $usage->quantity);
-    $cost = $serviceTotal + $partsTotal;
+    $serviceTotal  = $record->services->sum('price');
+    $partsTotal    = $record->partUsages->sum(fn($u) => $u->unit_price * $u->quantity);
+    $cost          = $serviceTotal + $partsTotal;
+    $discount      = $record->discount ?? 0;
+    $due           = max(0, $cost - $discount);
+    $advance       = $record->advance_payment ?? 0;
+    $remained      = max(0, $due - $advance);
+
+    $mechanicPct   = $record->mechanic_pct ?? 0;
+    $mechanicAmount = round(($serviceTotal - $discount) * $mechanicPct / 100, 2);
 
     $supervisorPct = 10;
-    $supervisorAmount = $serviceTotal * $supervisorPct / 100;
+    $paidPartsOnly = $record->partUsages->filter(fn($u) => $u->unit_price > 0)
+                        ->sum(fn($u) => $u->unit_price * $u->quantity);
+    $supervisorAmount = round(($serviceTotal + $paidPartsOnly) * $supervisorPct / 100, 2);
 
-    $mechanicPct = $record->mechanic_pct ?? 0;
-    $mechanicAmount = $serviceTotal * $mechanicPct / 100;
-
-    $extraPartsAmount = $record->partUsages
-        ->filter(fn($usage) => $usage->unit_price > 0)
-        ->sum(fn($usage) => $usage->unit_price * $usage->quantity * 0.10);
-
-    $companyAmount = ($cost - $supervisorAmount - $mechanicAmount) + $extraPartsAmount;
+    $companyAmount = max(0, ($advance + $remained) - $mechanicAmount - $supervisorAmount);
 @endphp
 
 <!-- Breakdown -->
 <div style="background: #f0f0f0; padding: 8px; font-weight: bold;">تقرير مالي</div>
-
 <table style="width: 100%; border-collapse: collapse; margin-top: 10px;" border="1">
     <thead style="background: #f8e4b8;">
         <tr>
@@ -48,11 +49,6 @@
             <td style="padding: 6px;">المشرف</td>
             <td style="padding: 6px;">{{ $supervisorPct }}%</td>
             <td style="padding: 6px;">{{ number_format($supervisorAmount, 2) }}</td>
-        </tr>
-        <tr>
-            <td style="padding: 6px;">هامش قطع الغيار (10% لكل قطعة سعرها > 0)</td>
-            <td style="padding: 6px;">حسب كل قطعة</td>
-            <td style="padding: 6px;">{{ number_format($extraPartsAmount, 2) }}</td>
         </tr>
         <tr style="font-weight: bold; background: #f5f5f5;">
             <td style="padding: 6px;">حصة الشركة</td>
@@ -75,13 +71,20 @@
     </tr>
     <tr>
         <td style="padding: 6px;"><strong>الخصم:</strong></td>
-        <td style="padding: 6px;">{{ number_format($record->discount, 2) }} د.ل</td>
+        <td style="padding: 6px;">{{ number_format($discount, 2) }} د.ل</td>
+    </tr>
+    <tr>
+        <td style="padding: 6px;"><strong>الصافي بعد الخصم:</strong></td>
+        <td style="padding: 6px;">{{ number_format($due, 2) }} د.ل</td>
+    </tr>
+    <tr>
+        <td style="padding: 6px;"><strong>المدفوع:</strong></td>
+        <td style="padding: 6px;">{{ number_format($advance, 2) }} د.ل</td>
     </tr>
     <tr style="font-weight: bold; background: #eee;">
-        <td style="padding: 6px;"><strong>المجموع:</strong></td>
-        <td style="padding: 6px;">{{ number_format($cost - $record->discount, 2) }} د.ل</td>
+        <td style="padding: 6px;"><strong>المتبقي:</strong></td>
+        <td style="padding: 6px;">{{ number_format($remained, 2) }} د.ل</td>
     </tr>
-
 </table>
 
 <!-- Footer -->

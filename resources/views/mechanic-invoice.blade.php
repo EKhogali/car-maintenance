@@ -3,7 +3,9 @@
     $partsTotal = $record->partUsages->sum(fn ($u) => $u->quantity * $u->unit_price);
     $totalCost = $servicesTotal + $partsTotal;
 
-    $mechanicPct = $mechanicPct ?? 0;
+
+    $mechanicPct = $record->mechanic_pct ?? 0;
+
     $discountedServiceTotal = max(0, $servicesTotal - $record->discount); // new logic
     $mechAmount = round($discountedServiceTotal * $mechanicPct / 100, 2); // updated
 @endphp
@@ -57,24 +59,7 @@
         </tbody>
     </table>
 
-    {{-- Parts --}}
-    <div style="background:#c9a15d; color:#fff; padding:6px; font-weight:bold; margin-top:20px;">قطع الغيار المستخدمة</div>
-    <!-- <table style="width:100%; border-collapse:collapse;" border="1">
-        <thead>
-            <tr style="background:#f8e4b8;">
-                <th style="padding:6px;">القطعة</th>
-                <th style="padding:6px;">العدد</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($record->partUsages as $u)
-                <tr>
-                    <td style="padding:6px;">{{ $u->part->name }}</td>
-                    <td style="padding:6px;">{{ $u->quantity }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table> -->
+
 
     {{-- Summary --}}
     <table style="width:100%; border-collapse:collapse; margin-top:20px;">
