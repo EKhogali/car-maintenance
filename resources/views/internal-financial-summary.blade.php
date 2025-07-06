@@ -95,7 +95,7 @@
     </thead>
     <tbody>
         <tr>
-            <td style="padding: 6px;">الفني ({{ $record->mechanic->name ?? '-' }})</td>
+            <td style="padding: 6px;">الفني ({{ $record->mechanic->name ?? '-' }}) من اجمالي الخدمات </td>
             <td style="padding: 6px;">{{ number_format($mechanicPct, 2) }}%</td>
             <td style="padding: 6px;">{{ number_format($mechanicAmount, 2) }}</td>
         </tr>
