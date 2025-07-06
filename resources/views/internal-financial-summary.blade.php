@@ -61,6 +61,30 @@
 </table>
 
 
+
+
+<!-- Totals Summary -->
+<div style="background: #c9a15d; color: white; padding: 8px; margin-top: 20px; font-weight: bold;">الإجماليات</div>
+<table style="width: 100%; border-collapse: collapse;" border="1">
+    <tr>
+        <td style="padding: 6px;"><strong>إجمالي الخدمات:</strong></td>
+        <td style="padding: 6px;">{{ number_format($serviceTotal, 2) }} د.ل</td>
+    </tr>
+    <tr>
+        <td style="padding: 6px;"><strong>إجمالي قطع الغيار:</strong></td>
+        <td style="padding: 6px;">{{ number_format($partsTotal, 2) }} د.ل</td>
+    </tr>
+    <tr>
+        <td style="padding: 6px;"><strong>الخصم:</strong></td>
+        <td style="padding: 6px;">{{ number_format($discount, 2) }} د.ل</td>
+    </tr>
+    <tr>
+        <td style="padding: 6px;"><strong>الصافي بعد الخصم:</strong></td>
+        <td style="padding: 6px;">{{ number_format($due, 2) }} د.ل</td>
+    </tr>
+
+</table>
+
 <table style="width: 100%; border-collapse: collapse; margin-top: 10px;" border="1">
     <thead style="background: #f8e4b8;">
         <tr>
@@ -86,35 +110,6 @@
             <td style="padding: 6px;">{{ number_format($companyAmount, 2) }}</td>
         </tr>
     </tbody>
-</table>
-
-<!-- Totals Summary -->
-<div style="background: #c9a15d; color: white; padding: 8px; margin-top: 20px; font-weight: bold;">الإجماليات</div>
-<table style="width: 100%; border-collapse: collapse;" border="1">
-    <tr>
-        <td style="padding: 6px;"><strong>إجمالي الخدمات:</strong></td>
-        <td style="padding: 6px;">{{ number_format($serviceTotal, 2) }} د.ل</td>
-    </tr>
-    <tr>
-        <td style="padding: 6px;"><strong>إجمالي قطع الغيار:</strong></td>
-        <td style="padding: 6px;">{{ number_format($partsTotal, 2) }} د.ل</td>
-    </tr>
-    <tr>
-        <td style="padding: 6px;"><strong>الخصم:</strong></td>
-        <td style="padding: 6px;">{{ number_format($discount, 2) }} د.ل</td>
-    </tr>
-    <tr>
-        <td style="padding: 6px;"><strong>الصافي بعد الخصم:</strong></td>
-        <td style="padding: 6px;">{{ number_format($due, 2) }} د.ل</td>
-    </tr>
-    <tr>
-        <td style="padding: 6px;"><strong>المدفوع:</strong></td>
-        <td style="padding: 6px;">{{ number_format($advance, 2) }} د.ل</td>
-    </tr>
-    <tr style="font-weight: bold; background: #eee;">
-        <td style="padding: 6px;"><strong>المتبقي:</strong></td>
-        <td style="padding: 6px;">{{ number_format($remained, 2) }} د.ل</td>
-    </tr>
 </table>
 
 <!-- Footer -->
