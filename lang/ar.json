@@ -98,13 +98,12 @@
   "parts.quantity": "الكمية",
   "parts.total": "الإجمالي",
 
-"service_category": "فئة الخدمة",
-    "service_categories": "فئات الخدمة",
-    "add_service_category": "إضافة فئة خدمة",
-    "edit_service_category": "تعديل فئة الخدمة",
-    "delete_service_category": "حذف فئة الخدمة",
-    "service_category_name": "اسم فئة الخدمة",
-
-
+  
+  "service_category": "فئة الخدمة",
+  "service_categories": "فئات الخدمة",
+  "add_service_category": "إضافة فئة خدمة",
+  "edit_service_category": "تعديل فئة الخدمة",
+  "delete_service_category": "حذف فئة الخدمة",
+  "service_category_name": "اسم فئة الخدمة",
   "": ""
 }

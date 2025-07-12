@@ -28,33 +28,33 @@ class ServiceCategoryResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
-                ->label(__('service_category_name'))
-                ->required()
-                ->maxLength(255),
+                    ->label(__('service_category_name'))
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
     public static function table(Tables\Table $table): Tables\Table
-{
-    return $table
-        ->columns([
-            TextColumn::make('id')
-                ->label('ID')
-                ->sortable(),
+    {
+        return $table
+            ->columns([
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable(),
 
-            TextColumn::make('name')
-                ->label(__('service_category_name'))
-                ->searchable()
-                ->sortable(),
-        ])
-        ->actions([
-            Tables\Actions\EditAction::make(),
-            Tables\Actions\DeleteAction::make(),
-        ])
-        ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
-        ]);
-}
+                TextColumn::make('name')
+                    ->label(__('service_category_name'))
+                    ->searchable()
+                    ->sortable(),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]);
+    }
 
     public static function getRelations(): array
     {
@@ -70,5 +70,25 @@ class ServiceCategoryResource extends Resource
             'create' => Pages\CreateServiceCategory::route('/create'),
             'edit' => Pages\EditServiceCategory::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('service_categories');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Master Data');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('service_category');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('service_categories');
     }
 }
