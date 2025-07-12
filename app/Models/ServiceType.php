@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\MaintenanceRecord;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ServiceType extends Model
 {
@@ -22,5 +23,12 @@ class ServiceType extends Model
                 ->withPivot('price')
                 ;
 }
+
+// In Service.php
+public function category(): BelongsTo
+{
+    return $this->belongsTo(ServiceCategory::class, 'service_category_id');
+}
+
 
 }

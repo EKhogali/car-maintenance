@@ -9,24 +9,21 @@
     </div>
 </div>
 
-@php
-    $serviceTotal  = $record->services->sum('price');
-    $partsTotal    = $record->partUsages->sum(fn($u) => $u->unit_price * $u->quantity);
-    $cost          = $serviceTotal + $partsTotal;
-    $discount      = $record->discount ?? 0;
-    $due           = max(0, $cost - $discount);
-    $advance       = $record->advance_payment ?? 0;
-    $remained      = max(0, $due - $advance);
+@php 
+    // Dynamically calculate totals
+    $servicesTotal = $record->services->sum('price');  // using related service records
+    $partsTotal = $record->partUsages->sum(fn ($u) => $u->quantity * $u->unit_price); // from related part usages
 
-    $mechanicPct   = $record->mechanic_pct ?? 0;
-    $mechanicAmount = round(($serviceTotal - $discount) * $mechanicPct / 100, 2);
+    // Read stored values from DB if available
+    $discount = $record->discount ?? 0;
+    $mechanicPct = $record->mechanic_pct ?? 0;
+    $mechanicAmount = $record->mechanic_amount ?? 0;
+    $supervisorPct = $record->supervisor_pct ?? 0;
+    $supervisorAmount = $record->supervisor_amount ?? 0;
+    $companyAmount = $record->company_amount ?? 0;
+    $companyShare = ($servicesTotal - $discount) - $mechanicAmount - $supervisorAmount;
 
-    $supervisorPct = 10;
-    $paidPartsOnly = $record->partUsages->filter(fn($u) => $u->unit_price > 0)
-                        ->sum(fn($u) => $u->unit_price * $u->quantity);
-    $supervisorAmount = round(($serviceTotal + $paidPartsOnly) * $supervisorPct / 100, 2);
-
-    $companyAmount = max(0, ($advance + $remained) - $mechanicAmount - $supervisorAmount);
+    $totalAfterDiscount = max(0, $servicesTotal - $discount);
 
     $mechanicName = $record->mechanic->name ?? \App\Models\Mechanic::find($record->mechanic_id)?->name ?? '-';
 @endphp
@@ -67,25 +64,7 @@
 
 <!-- Totals Summary -->
 <div style="background: #c9a15d; color: white; padding: 8px; margin-top: 20px; font-weight: bold;">الإجماليات</div>
-<table style="width: 100%; border-collapse: collapse;" border="1">
-    <tr>
-        <td style="padding: 6px;"><strong>إجمالي الخدمات:</strong></td>
-        <td style="padding: 6px;">{{ number_format($serviceTotal, 2) }} د.ل</td>
-    </tr>
-    <tr>
-        <td style="padding: 6px;"><strong>إجمالي قطع الغيار:</strong></td>
-        <td style="padding: 6px;">{{ number_format($partsTotal, 2) }} د.ل</td>
-    </tr>
-    <tr>
-        <td style="padding: 6px;"><strong>الخصم:</strong></td>
-        <td style="padding: 6px;">{{ number_format($discount, 2) }} د.ل</td>
-    </tr>
-    <tr>
-        <td style="padding: 6px;"><strong>الصافي بعد الخصم:</strong></td>
-        <td style="padding: 6px;">{{ number_format($due, 2) }} د.ل</td>
-    </tr>
 
-</table>
 
 <table style="width: 100%; border-collapse: collapse; margin-top: 10px;" border="1">
     <thead style="background: #f8e4b8;">
@@ -97,19 +76,39 @@
     </thead>
     <tbody>
         <tr>
+            <td style="padding: 6px;">إجمالي الخدمات:</td>
+            <td style="padding: 6px;">/</td>
+            <td style="padding: 6px;">{{ number_format($servicesTotal, 2) }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 6px;">التخفيض:</td>
+            <td style="padding: 6px;">/</td>
+            <td style="padding: 6px;">{{ number_format($discount, 2) }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 6px;">الاجمالي بعد الخصم:</td>
+            <td style="padding: 6px;">/</td>
+            <td style="padding: 6px;">{{ number_format($totalAfterDiscount, 2) }}</td>
+        </tr>
+        <tr>
             <td style="padding: 6px;">الفني ({{ $mechanicName ?? '-' }}) من اجمالي الخدمات </td>
             <td style="padding: 6px;">{{ number_format($mechanicPct, 2) }}%</td>
             <td style="padding: 6px;">{{ number_format($mechanicAmount, 2) }}</td>
         </tr>
         <tr>
-            <td style="padding: 6px;">المشرف</td>
+            <td style="padding: 6px;">اجمالي قطع الغيار: </td>
+            <td style="padding: 6px;">/</td>
+            <td style="padding: 6px;">{{ number_format($partsTotal, 2) }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 6px;">حصة المدير التنفيذي: </td>
             <td style="padding: 6px;">{{ $supervisorPct }}%</td>
             <td style="padding: 6px;">{{ number_format($supervisorAmount, 2) }}</td>
         </tr>
         <tr style="font-weight: bold; background: #f5f5f5;">
             <td style="padding: 6px;">حصة الشركة</td>
             <td style="padding: 6px;">باقي المبلغ</td>
-            <td style="padding: 6px;">{{ number_format($companyAmount, 2) }}</td>
+            <td style="padding: 6px;">{{ number_format($companyShare, 2) }}</td>
         </tr>
     </tbody>
 </table>

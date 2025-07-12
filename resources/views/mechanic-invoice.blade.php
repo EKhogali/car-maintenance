@@ -1,14 +1,14 @@
 @php
-    $servicesTotal = $record->services->sum('price');
-    $partsTotal = $record->partUsages->sum(fn ($u) => $u->quantity * $u->unit_price);
-    $totalCost = $servicesTotal + $partsTotal;
+    $servicesTotal     = $record->services->sum('price');
+    $discount          = $record->discount ?? 0;
+    $remained          = $servicesTotal - $discount;
+
+    $mechanicPct       = $record->mechanic_pct ?? 0;
+    $mechanicAmount    = $mechanicPct * $remained / 100 ?? 0;
 
 
-    $mechanicPct = $record->mechanic_pct ?? 0;
-
-    $discountedServiceTotal = max(0, $servicesTotal - $record->discount); // new logic
-    $mechAmount = round($discountedServiceTotal * $mechanicPct / 100, 2); // updated
 @endphp
+
 
 <div style="font-family: Arial, sans-serif; direction: rtl; color:#000; font-size:14px; padding:20px;">
 
@@ -69,16 +69,17 @@
         </tr>
         <tr>
             <td style="padding:5px;"><strong>الخصم:</strong></td>
-            <td style="padding:5px;">{{ number_format($record->discount,2) }} د.ل</td>
+            <td style="padding:5px;">{{ number_format($discount, 2) }} د.ل</td>
         </tr>
         <tr>
             <td style="padding:5px;"><strong>إجمالي بعد الخصم:</strong></td>
-            <td style="padding:5px;">{{ number_format($servicesTotal - $record->discount,2) }} د.ل</td>
+            <td style="padding:5px;">{{ number_format($remained, 2)  }} د.ل</td>
         </tr>
-        <tr>
-            <td style="padding:5px;"><strong>مستحق الفني:</strong></td>
-            <td style="padding:5px;">{{ $mechanicPct }}% = {{ number_format($mechAmount,2) }} د.ل</td>
-        </tr>
+
+    <tr>
+        <td style="padding:5px;"><strong>مستحق الفني ({{ $mechanicPct }}% من الخدمات):</strong></td>
+        <td style="padding:5px;">{{ number_format($mechanicAmount, 2) }} د.ل</td>
+    </tr>
     </table>
 
     {{-- Footer --}}

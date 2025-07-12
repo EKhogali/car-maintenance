@@ -7,6 +7,7 @@ use App\Filament\Resources\ServiceTypeResource\RelationManagers;
 use App\Models\ServiceType;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -21,62 +22,69 @@ class ServiceTypeResource extends Resource
 
 
     public static function form(Form $form): Form
-{
-    return $form
-        ->schema([
-            Forms\Components\TextInput::make('name')
-                ->label(__('service_type.name'))
-                ->required()
-                ->unique(ignoreRecord: true)
-                ->maxLength(100),
+    {
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('name')
+                    ->label(__('service_type.name'))
+                    ->required()
+                    ->unique(ignoreRecord: true)
+                    ->maxLength(100),
 
-            Forms\Components\Textarea::make('description')
-                ->label(__('service_type.description'))
-                ->rows(3)
-                ->maxLength(500),
+                Select::make('service_category_id')
+                    ->label('تصنيف الخدمة')
+                    ->relationship('category', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->nullable(),
 
-            Forms\Components\TextInput::make('price')
-                ->label(__('service_type.price'))
-                ->numeric()
-                ->prefix('LYD')
-                ->default(0),
-        ]);
-}
+                Forms\Components\Textarea::make('description')
+                    ->label(__('service_type.description'))
+                    ->rows(3)
+                    ->maxLength(500),
+
+                Forms\Components\TextInput::make('price')
+                    ->label(__('service_type.price'))
+                    ->numeric()
+                    ->prefix('LYD')
+                    ->default(0),
+            ]);
+    }
 
     public static function table(Table $table): Table
-{
-    return $table
-        ->columns([
-            Tables\Columns\TextColumn::make('name')
-                ->label(__('service_type.name'))
-                ->sortable()
-                ->searchable(),
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label(__('service_type.name'))
+                    ->sortable()
+                    ->searchable(),
 
-            Tables\Columns\TextColumn::make('price')
-                ->label(__('service_type.price'))
-                ->sortable()
-    ->formatStateUsing(fn ($state) => number_format($state, 2) . ''),
+                Tables\Columns\TextColumn::make('price')
+                    ->label(__('service_type.price'))
+                    ->sortable()
+                    ->formatStateUsing(fn($state) => number_format($state, 2) . ''),
 
-            Tables\Columns\TextColumn::make('created_at')
-                ->label(__('service_type.created_at'))
-                ->sortable()
-                ->since(),
-        ])
-        ->filters([
-            Tables\Filters\Filter::make('high_cost')
-                ->label(__('service_type.filter.high_cost'))
-                ->query(fn ($query) => $query->where('price', '>', 200)),
-        ])
-        ->actions([
-            Tables\Actions\ViewAction::make(),
-            Tables\Actions\EditAction::make(),
-            Tables\Actions\DeleteAction::make(),
-        ])
-        ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
-        ])
-        ->defaultSort('name');
-}
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('service_type.created_at'))
+                    ->sortable()
+                    ->since(),
+            ])
+            ->filters([
+                Tables\Filters\Filter::make('high_cost')
+                    ->label(__('service_type.filter.high_cost'))
+                    ->query(fn($query) => $query->where('price', '>', 200)),
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
+            ])
+            ->defaultSort('name');
+    }
 
 
     public static function getRelations(): array

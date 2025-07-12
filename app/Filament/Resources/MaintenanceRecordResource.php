@@ -228,27 +228,28 @@ class MaintenanceRecordResource extends Resource
                         ->label('الخدمات')
                         ->relationship('services') // ← hasMany to pivot model
                         ->schema([
-                            // Forms\Components\Select::make('service_type_id')
-                            //     ->label('الخدمة')
-                            //     ->options(\App\Models\ServiceType::pluck('name', 'id'))
-                            //     ->required()
-                            //     ->reactive()
-                            //     ->searchable()
-                            //     ->afterStateUpdated(
-                            //         fn($state, callable $set) =>
-                            //         $set('price', \App\Models\ServiceType::find($state)?->price ?? 0)
-                            //     ),
+
+
 
                             Select::make('service_type_id')
                                 ->label('الخدمة')
-                                ->options(\App\Models\ServiceType::pluck('name', 'id'))
+                                ->options(function () {
+                                    return \App\Models\ServiceCategory::with('serviceTypes')->get()
+                                        ->flatMap(function ($category) {
+                                            return $category->serviceTypes->mapWithKeys(function ($type) use ($category) {
+                                                return [$type->id => $category->name . ' - ' . $type->name];
+                                            });
+                                        });
+                                })
                                 ->searchable()
                                 ->required()
-                                ->createOptionForm([                 // 👈 add-new-service UI
+                                ->createOptionForm([                 
                                     TextInput::make('name')
                                         ->label('اسم الخدمة')
                                         ->required()
                                         ->maxLength(100),
+
+
 
                                     TextInput::make('description')
                                         ->label('وصف'),
