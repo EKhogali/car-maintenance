@@ -35,31 +35,33 @@ class MaintenanceRecord extends Model
         'company_amount',
     ];
 
-protected static function booted(): void
-{
-    static::saving(function ($record) {
-        $servicesTotal = $record->services->sum('price');
-        $partsTotal = $record->partUsages->sum(fn($u) => $u->unit_price * $u->quantity);
-        $discount = $record->discount ?? 0;
+    public function recalculateTotals(): void
+    {
+        $servicesTotal = $this->services->sum('price');
+        $partsTotal = $this->partUsages->sum(fn($p) => $p->quantity * $p->unit_price);
+        $discount = $this->discount ?? 0;
+        $advance = $this->advance_payment ?? 0;
+        $mechanicPct = $this->mechanic_pct ?? 0;
 
-        // Total paid amount
-        $totalPaid = $servicesTotal + $partsTotal - $discount;
+        $discountedServiceTotal = max(0, $servicesTotal - $discount);
 
-        // Mechanic Pct fallback from relation
-        $mechanicPct = $record->mechanic_pct ?? $record->mechanic?->work_pct ?? 0;
-        $record->mechanic_pct = $mechanicPct;
+        $mechanicAmount = round($discountedServiceTotal * $mechanicPct / 100, 2);
+        $supervisorAmount = round(($servicesTotal + $partsTotal) * 0.10, 2);
+        $due = $discountedServiceTotal + $partsTotal;
+        $companyAmount = round($due - $advance - $partsTotal - $mechanicAmount - $supervisorAmount, 2);
 
-        // Mechanic Amount from services after discount
-        $record->mechanic_amount = max(0, $servicesTotal - $discount) * $mechanicPct / 100;
+        $this->services_total = $servicesTotal;
+        $this->parts_total = $partsTotal;
+        $this->mechanic_amount = $mechanicAmount;
+        $this->supervisor_amount = $supervisorAmount;
+        $this->company_amount = $companyAmount;
+        $this->due = $due;
 
-        // Supervisor defaults to 10%
-        $record->supervisor_pct = $record->supervisor_pct ?? 10;
-        $record->supervisor_amount = $totalPaid * $record->supervisor_pct / 100; 
-        $record->company_amount = $totalPaid - $record->mechanic_amount - $record->supervisor_amount - $partsTotal;
-    });
-}
+        $this->saveQuietly(); // Prevent infinite loop if called from observer
+    }
 
-    
+
+
     public function car()
     {
         return $this->belongsTo(Car::class);
@@ -69,7 +71,7 @@ protected static function booted(): void
     {
         return $this->belongsTo(Mechanic::class);
     }
-  
+
     public function partUsages()
     {
         return $this->hasMany(MaintenanceRecordPart::class);

@@ -251,6 +251,7 @@ class MaintenanceRecordResource extends Resource
 
 
 
+
                                     TextInput::make('description')
                                         ->label('وصف'),
 
@@ -580,18 +581,20 @@ class MaintenanceRecordResource extends Resource
     public static function beforeSave(Form $form, Model $record): void
     {
         // Calculate total service type cost
-        $servicesCost = $record->serviceTypes()->sum('price');
+        // $servicesCost = $record->serviceTypes()->sum('price');
 
-        // Calculate total part usage cost
-        $partsCost = $record->partUsages->sum(function ($part) {
-            return $part->quantity * $part->unit_price;
-        });
+        // // Calculate total part usage cost
+        // $partsCost = $record->partUsages->sum(function ($part) {
+        //     return $part->quantity * $part->unit_price;
+        // });
 
-        // Combine
-        $record->cost = $servicesCost + $partsCost;
+        // // Combine
+        // $record->cost = $servicesCost + $partsCost;
 
-        // Apply discount if set
-        $record->due = max(0, $record->cost - ($record->discount ?? 0));
+        // // Apply discount if set
+        // $record->due = max(0, $record->cost - ($record->discount ?? 0));
+
+        $record->recalculateTotals();
     }
 
 
