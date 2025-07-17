@@ -229,28 +229,30 @@ class MaintenanceRecordResource extends Resource
                         ->relationship('services') // ← hasMany to pivot model
                         ->schema([
 
-
-
                             Select::make('service_type_id')
                                 ->label('الخدمة')
                                 ->options(function () {
                                     return \App\Models\ServiceCategory::with('serviceTypes')->get()
-                                        ->flatMap(function ($category) {
-                                            return $category->serviceTypes->mapWithKeys(function ($type) use ($category) {
-                                                return [$type->id => $category->name . ' - ' . $type->name];
-                                            });
+                                        ->mapWithKeys(function ($category) {
+                                            return [$category->name => $category->serviceTypes->pluck('name', 'id')];
                                         });
                                 })
                                 ->searchable()
+                                // ->options(function () {
+                                //     return \App\Models\ServiceCategory::with('serviceTypes')->get()
+                                //         ->flatMap(function ($category) {
+                                //             return $category->serviceTypes->mapWithKeys(function ($type) use ($category) {
+                                //                 return [$type->id => $category->name . ' - ' . $type->name];
+                                //             });
+                                //         });
+                                // })
+                                // ->searchable()
                                 ->required()
-                                ->createOptionForm([                 
+                                ->createOptionForm([
                                     TextInput::make('name')
                                         ->label('اسم الخدمة')
                                         ->required()
                                         ->maxLength(100),
-
-
-
 
                                     TextInput::make('description')
                                         ->label('وصف'),
@@ -595,7 +597,7 @@ class MaintenanceRecordResource extends Resource
         // $record->due = max(0, $record->cost - ($record->discount ?? 0));
 
         $record->recalculateTotals();
-        
+
     }
 
 
