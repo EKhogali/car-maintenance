@@ -595,6 +595,7 @@ class MaintenanceRecordResource extends Resource
         // $record->due = max(0, $record->cost - ($record->discount ?? 0));
 
         $record->recalculateTotals();
+        
     }
 
 
