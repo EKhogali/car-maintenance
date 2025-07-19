@@ -105,5 +105,8 @@
   "edit_service_category": "تعديل فئة الخدمة",
   "delete_service_category": "حذف فئة الخدمة",
   "service_category_name": "اسم فئة الخدمة",
+
+  
+  "payment.label": "طريقة الدفع",
   "": ""
 }

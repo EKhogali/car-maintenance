@@ -16,6 +16,10 @@ class Mechanic extends Model
         'specialization',
         'experience_years',
         'license_number',
+        'work_pct',
+        'hire_date',
+        'is_active',
+        'notes',
     ];
 
     public function maintenanceRecords()

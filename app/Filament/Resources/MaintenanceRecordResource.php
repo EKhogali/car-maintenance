@@ -19,6 +19,11 @@ use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\ComponentContainer;
+
+
 
 class MaintenanceRecordResource extends Resource
 {
@@ -128,16 +133,6 @@ class MaintenanceRecordResource extends Resource
             // ----------------------
 
 
-
-
-
-            // Forms\Components\Select::make('mechanic_id')
-            //     ->relationship('mechanic', 'name')
-            //     ->searchable()
-            //     ->preload()
-            //     ->label(__('maintenance.mechanic')),
-
-            // ②  Update the <select> for the mechanic so it refreshes that field
             Forms\Components\Select::make('mechanic_id')
                 ->relationship('mechanic', 'name')
                 ->searchable()
@@ -189,7 +184,9 @@ class MaintenanceRecordResource extends Resource
 
             Forms\Components\TextInput::make('odometer_reading')
                 ->numeric()
-                ->label(__('maintenance.odometer')),
+                ->label(__('maintenance.odometer'))
+                ->required()
+                ->numeric(),
 
             Forms\Components\Textarea::make('first_check')
                 ->label('الفحص الأولي')
@@ -201,7 +198,7 @@ class MaintenanceRecordResource extends Resource
 
 
 
-            Forms\Components\Section::make(__('car.plural_label'))
+            Forms\Components\Section::make(__('payment.label'))
                 ->schema([
                     Forms\Components\TextInput::make('advance_payment')
                         ->label(__('maintenance.advance_payment')) // Add to lang/ar.json
@@ -219,59 +216,73 @@ class MaintenanceRecordResource extends Resource
                         ->maxLength(255)
                         ->placeholder('أدخل ملاحظة عن الدفعة مثل طريقة الدفع أو رقم الإيصال'),
                 ])
+                // ->aside()
+                // ->icon('heroicon-o-banknotes')
                 ->columns(1),
 
 
             Forms\Components\Section::make(__('حسابات الصيانة'))
                 ->schema([
+
+
+
+
                     Forms\Components\Repeater::make('services')
                         ->label('الخدمات')
-                        ->relationship('services') // ← hasMany to pivot model
+                        ->relationship('services')
                         ->schema([
-
                             Select::make('service_type_id')
                                 ->label('الخدمة')
                                 ->options(function () {
                                     return \App\Models\ServiceCategory::with('serviceTypes')->get()
-                                        ->mapWithKeys(function ($category) {
-                                            return [$category->name => $category->serviceTypes->pluck('name', 'id')];
+                                        ->flatMap(function ($category) {
+                                            return $category->serviceTypes->mapWithKeys(function ($type) use ($category) {
+                                                return [$type->id => $category->name . ' - ' . $type->name];
+                                            });
                                         });
                                 })
+                                ->getOptionLabelFromRecordUsing(function ($record) {
+                                    return $record->serviceCategory?->name . ' - ' . $record->name;
+                                })
+                                ->relationship('serviceType', 'name')
+                                ->preload()
                                 ->searchable()
-                                // ->options(function () {
-                                //     return \App\Models\ServiceCategory::with('serviceTypes')->get()
-                                //         ->flatMap(function ($category) {
-                                //             return $category->serviceTypes->mapWithKeys(function ($type) use ($category) {
-                                //                 return [$type->id => $category->name . ' - ' . $type->name];
-                                //             });
-                                //         });
-                                // })
-                                // ->searchable()
                                 ->required()
-                                ->createOptionForm([
-                                    TextInput::make('name')
-                                        ->label('اسم الخدمة')
-                                        ->required()
-                                        ->maxLength(100),
-
-                                    TextInput::make('description')
-                                        ->label('وصف'),
-
-                                    TextInput::make('price')
-                                        ->label('السعر الافتراضي')
-                                        ->numeric()
-                                        ->required(),
-                                ])
                                 ->reactive()
-                                ->afterStateUpdated(
-                                    fn($state, $set) =>
-                                    $set('price', \App\Models\ServiceType::find($state)?->price ?? 0)
-                                ),
+                                ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                    $existingPrice = $get('price');
 
+                                    $shouldUpdate = is_null($existingPrice) || $existingPrice === '' || floatval($existingPrice) === 0.0;
 
-                            Forms\Components\TextInput::make('price')
+                                    if ($shouldUpdate && filled($state)) {
+                                        $serviceType = \App\Models\ServiceType::query()
+                                            ->select('price')
+                                            ->find($state);
+
+                                        if ($serviceType && $serviceType->price > 0) {
+                                            $set('price', $serviceType->price);
+                                        }
+                                    }
+                                })
+                                ->afterStateHydrated(function (callable $get, callable $set) {
+                                    $price = $get('price');
+                                    $serviceTypeId = $get('service_type_id');
+
+                                    if ((is_null($price) || $price === '' || floatval($price) === 0.0) && filled($serviceTypeId)) {
+                                        $serviceType = \App\Models\ServiceType::select('price')->find($serviceTypeId);
+
+                                        if ($serviceType && $serviceType->price > 0) {
+                                            $set('price', $serviceType->price);
+                                        }
+                                    }
+                                })
+
+                            ,
+
+                            TextInput::make('price')
                                 ->label('السعر')
                                 ->numeric()
+                                ->reactive()
                                 ->required(),
                         ])
                         ->columns(2)
@@ -280,15 +291,9 @@ class MaintenanceRecordResource extends Resource
                             $set('cost', $total);
                             $set('due', max(
                                 0,
-                                $total
-                                - ($get('discount') ?? 0)
-                                - ($get('advance_payment') ?? 0)
+                                $total - ($get('discount') ?? 0) - ($get('advance_payment') ?? 0)
                             ));
                         }),
-
-
-                    // Forms\Components\Textarea::make('description')
-                    //     ->label(__('maintenance.description')),
                     Forms\Components\TextInput::make('cost')
                         ->label(__('maintenance.cost'))
                         ->numeric()
@@ -321,6 +326,7 @@ class MaintenanceRecordResource extends Resource
 
                 ])
                 ->columns(1),
+
 
 
             Forms\Components\DatePicker::make('next_due_date')
@@ -457,7 +463,7 @@ class MaintenanceRecordResource extends Resource
             //     ->formatStateUsing(fn($state) => number_format($state, 2) . ''),
 
             Tables\Columns\TextColumn::make('odometer_reading')
-                ->label(__('maintenance.odometer')),
+                ->label(__('maintenance.odometer'))
         ])
             ->filters([
                 Tables\Filters\Filter::make('due')

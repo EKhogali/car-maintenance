@@ -60,6 +60,12 @@ class ServiceTypeResource extends Resource
                     ->sortable()
                     ->searchable(),
 
+                Tables\Columns\TextColumn::make('category.name')
+                    ->label(__('الفئة'))
+                    ->sortable()
+                    ->searchable(),
+
+
                 Tables\Columns\TextColumn::make('price')
                     ->label(__('service_type.price'))
                     ->sortable()
@@ -74,6 +80,11 @@ class ServiceTypeResource extends Resource
                 Tables\Filters\Filter::make('high_cost')
                     ->label(__('service_type.filter.high_cost'))
                     ->query(fn($query) => $query->where('price', '>', 200)),
+
+                Tables\Filters\SelectFilter::make('service_category_id')
+                    ->label(__('الفئة'))
+                    ->relationship('category', 'name'),
+
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
