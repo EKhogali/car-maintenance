@@ -46,7 +46,8 @@ class MaintenanceRecord extends Model
         $discountedServiceTotal = max(0, $servicesTotal - $discount);
 
         $mechanicAmount = round($discountedServiceTotal * $mechanicPct / 100, 2);
-        $supervisorAmount = round(($servicesTotal + $partsTotal) * 0.10, 2);
+        $supervisorAmount = round(($servicesTotal) * 0.10, 2);
+        // $supervisorAmount = round(($servicesTotal + $partsTotal) * 0.10, 2);
         $due = $discountedServiceTotal + $partsTotal;
         $companyAmount = round($due - $advance - $partsTotal - $mechanicAmount - $supervisorAmount, 2);
 

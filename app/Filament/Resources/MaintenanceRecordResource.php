@@ -370,12 +370,7 @@ class MaintenanceRecordResource extends Resource
 
 
             Tables\Columns\TextColumn::make('cost')
-                ->label('التكلفة')
-                ->formatStateUsing(function ($state, $record) {
-                    $servicesTotal = $record->services->sum('price');
-                    $partsTotal = $record->partUsages->sum(fn($u) => $u->unit_price * $u->quantity);
-                    return number_format($servicesTotal + $partsTotal, 2) . ' د.ل';
-                }),
+                ->label('التكلفة'),
 
             Tables\Columns\TextColumn::make('discount')
                 ->label('الخصم')
@@ -383,13 +378,7 @@ class MaintenanceRecordResource extends Resource
                 ->toggleable(),
 
             Tables\Columns\TextColumn::make('due')
-                ->label('المبلغ المستحق')
-                ->formatStateUsing(function ($state, $record) {
-                    $servicesTotal = $record->services->sum('price');
-                    $partsTotal = $record->partUsages->sum(fn($u) => $u->unit_price * $u->quantity);
-                    $cost = $servicesTotal + $partsTotal;
-                    return number_format(max(0, $cost - ($record->discount ?? 0)), 2) . ' د.ل';
-                }),
+                ->label('المبلغ المستحق'),
 
             Tables\Columns\TextColumn::make('advance_payment')
                 ->label('الدفعة المقدمة')
@@ -398,14 +387,6 @@ class MaintenanceRecordResource extends Resource
 
             Tables\Columns\TextColumn::make('remained')
                 ->label('المتبقي')
-                ->formatStateUsing(function ($state, $record) {
-                    $servicesTotal = $record->services->sum('price');
-                    $partsTotal = $record->partUsages->sum(fn($u) => $u->unit_price * $u->quantity);
-                    $cost = $servicesTotal + $partsTotal;
-                    $due = $cost - ($record->discount ?? 0);
-                    $remained = $due - ($record->advance_payment ?? 0);
-                    return number_format(max(0, $remained), 2) . ' د.ل';
-                })
                 ->toggleable(isToggledHiddenByDefault: true),
 
             Tables\Columns\TextColumn::make('mechanic_pct')
@@ -415,52 +396,15 @@ class MaintenanceRecordResource extends Resource
 
             Tables\Columns\TextColumn::make('mechanic_amount')
                 ->label('مستحق الفني')
-                ->formatStateUsing(function ($state, $record) {
-                    $serviceTotal = $record->services->sum('price');
-                    return $record->mechanic_pct
-                        ? number_format(($record->mechanic_pct / 100) * $serviceTotal, 2) . ' د.ل'
-                        : '--';
-                })
                 ->toggleable(isToggledHiddenByDefault: true),
 
             Tables\Columns\TextColumn::make('supervisor_amount')
                 ->label('مستحق المشرف')
-                ->formatStateUsing(function ($state, $record) {
-                    $serviceTotal = $record->services->sum('price');
-                    $pricedPartsTotal = $record->partUsages
-                        ->filter(fn($u) => $u->unit_price > 0)
-                        ->sum(fn($u) => $u->quantity * $u->unit_price);
-                    return number_format(($serviceTotal + $pricedPartsTotal) * 0.10, 2) . ' د.ل';
-                })
                 ->toggleable(isToggledHiddenByDefault: true),
 
             Tables\Columns\TextColumn::make('company_amount')
                 ->label('نصيب الشركة')
-                ->formatStateUsing(function ($state, $record) {
-                    $serviceTotal = $record->services->sum('price');
-                    $partsTotal = $record->partUsages->sum(fn($u) => $u->quantity * $u->unit_price);
-                    $pricedParts = $record->partUsages
-                        ->filter(fn($u) => $u->unit_price > 0)
-                        ->sum(fn($u) => $u->unit_price * $u->quantity);
-
-                    $cost = $serviceTotal + $partsTotal;
-                    $paid = $cost - ($record->discount ?? 0);
-
-                    $mechanic = ($record->mechanic_pct ?? 0) * $serviceTotal / 100;
-                    $supervisor = ($serviceTotal + $pricedParts) * 0.10;
-
-                    return number_format($paid - ($mechanic + $supervisor), 2) . ' د.ل';
-                })
                 ->toggleable(isToggledHiddenByDefault: true),
-
-
-            // Tables\Columns\TextColumn::make('cost')
-            //     ->label(__('maintenance.cost'))
-            //     ->formatStateUsing(fn($state) => number_format($state, 2) . ''),
-
-            // Tables\Columns\TextColumn::make('advance_payment')
-            //     ->label(__('maintenance.advance_payment'))
-            //     ->formatStateUsing(fn($state) => number_format($state, 2) . ''),
 
             Tables\Columns\TextColumn::make('odometer_reading')
                 ->label(__('maintenance.odometer'))
