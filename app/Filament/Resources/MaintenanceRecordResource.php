@@ -380,6 +380,16 @@ class MaintenanceRecordResource extends Resource
             Tables\Columns\TextColumn::make('due')
                 ->label('المبلغ المستحق'),
 
+            // Tables\Columns\TextColumn::make('spare_parts_total')
+            //     ->label('إجمالي قطع الغيار')
+            //     ->formatStateUsing(function ($state, $record) {
+            //         return number_format(
+            //             $record->partUsages->sum(fn($part) => $part->unit_price * $part->quantity),
+            //             2
+            //         ) . ' د.ل';
+            //     })
+            //     ->toggleable(isToggledHiddenByDefault: true),
+
             Tables\Columns\TextColumn::make('advance_payment')
                 ->label('الدفعة المقدمة')
                 ->formatStateUsing(fn($state) => number_format($state, 2) . ' د.ل')

@@ -39,6 +39,11 @@ class MaintenanceRecord extends Model
     {
         $servicesTotal = $this->services->sum('price');
         $partsTotal = $this->partUsages->sum(fn($p) => $p->quantity * $p->unit_price);
+
+        $billablePartsTotal = $this->partUsages
+            ->filter(fn($p) => $p->unit_price > 0)
+            ->sum(fn($p) => $p->unit_price) ?? 0;
+
         $discount = $this->discount ?? 0;
         $advance = $this->advance_payment ?? 0;
         $mechanicPct = $this->mechanic_pct ?? 0;
@@ -46,7 +51,7 @@ class MaintenanceRecord extends Model
         $discountedServiceTotal = max(0, $servicesTotal - $discount);
 
         $mechanicAmount = round($discountedServiceTotal * $mechanicPct / 100, 2);
-        $supervisorAmount = round(($servicesTotal) * 0.10, 2);
+        $supervisorAmount = round(($servicesTotal + $billablePartsTotal) * 0.10, 2);
         // $supervisorAmount = round(($servicesTotal + $partsTotal) * 0.10, 2);
         $due = $discountedServiceTotal + $partsTotal;
         $companyAmount = round($due - $advance - $partsTotal - $mechanicAmount - $supervisorAmount, 2);
