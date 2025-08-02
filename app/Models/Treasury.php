@@ -17,7 +17,8 @@ class Treasury extends Model
         'reference',
         'note',
         'created_by',
-        'updated_by'
+        'updated_by',
+        'transaction_date',
     ];
 
     public function account()
