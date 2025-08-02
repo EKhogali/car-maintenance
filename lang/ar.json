@@ -108,5 +108,33 @@
 
   
   "payment.label": "طريقة الدفع",
+
+  "Treasury Management": "إدارة الخزينة",
+
+  "treasury.navigation_label": "الخزينة",
+  "treasury.model_label": "معاملة مالية",
+  "treasury.plural_label": "الخزينة",
+  "treasury.account": "الحساب",
+  "treasury.amount": "القيمة",
+  "treasury.type": "النوع",
+  "treasury.reference": "المرجع",
+  "treasury.note": "ملاحظة",
+  "treasury.tags": "الوسوم",
+  "treasury.income": "إيراد",
+  "treasury.expense": "مصروف",
+  "treasury.created_at": "تاريخ الإضافة",
+
+  "account.navigation_label": "الحسابات",
+  "account.model_label": "حساب",
+  "account.plural_label": "الحسابات",
+  "account.name": "اسم الحساب",
+  "account.description": "الوصف",
+
+  "tag.navigation_label": "التصانيف",
+  "tag.model_label": "تصنيف",
+  "tag.plural_label": "التصانيف",
+  "tag.name": "الاسم",
+
+
   "": ""
 }

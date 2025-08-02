@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Treasury;
+use App\Models\Tag;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class TreasuryPolicy
+class TagPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class TreasuryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_treasury');
+        return $user->can('view_any_tag');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Treasury $treasury): bool
+    public function view(User $user, Tag $tag): bool
     {
-        return $user->can('view_treasury');
+        return $user->can('view_tag');
     }
 
     /**
@@ -31,23 +31,23 @@ class TreasuryPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_treasury');
+        return $user->can('create_tag');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Treasury $treasury): bool
+    public function update(User $user, Tag $tag): bool
     {
-        return $user->can('update_treasury');
+        return $user->can('update_tag');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Treasury $treasury): bool
+    public function delete(User $user, Tag $tag): bool
     {
-        return $user->can('delete_treasury');
+        return $user->can('delete_tag');
     }
 
     /**
@@ -55,15 +55,15 @@ class TreasuryPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_treasury');
+        return $user->can('delete_any_tag');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Treasury $treasury): bool
+    public function forceDelete(User $user, Tag $tag): bool
     {
-        return $user->can('force_delete_treasury');
+        return $user->can('force_delete_tag');
     }
 
     /**
@@ -71,15 +71,15 @@ class TreasuryPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_treasury');
+        return $user->can('force_delete_any_tag');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Treasury $treasury): bool
+    public function restore(User $user, Tag $tag): bool
     {
-        return $user->can('restore_treasury');
+        return $user->can('restore_tag');
     }
 
     /**
@@ -87,15 +87,15 @@ class TreasuryPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_treasury');
+        return $user->can('restore_any_tag');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Treasury $treasury): bool
+    public function replicate(User $user, Tag $tag): bool
     {
-        return $user->can('replicate_treasury');
+        return $user->can('replicate_tag');
     }
 
     /**
@@ -103,6 +103,6 @@ class TreasuryPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_treasury');
+        return $user->can('reorder_tag');
     }
 }

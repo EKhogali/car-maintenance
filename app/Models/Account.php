@@ -9,4 +9,11 @@ class Account extends Model
 {
     /** @use HasFactory<\Database\Factories\AccountFactory> */
     use HasFactory;
+
+    protected $fillable = ['name', 'description'];
+
+    public function treasuries()
+    {
+        return $this->hasMany(Treasury::class);
+    }
 }
