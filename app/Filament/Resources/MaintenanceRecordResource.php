@@ -282,8 +282,18 @@ class MaintenanceRecordResource extends Resource
                             TextInput::make('price')
                                 ->label('السعر')
                                 ->numeric()
-                                ->reactive()
-                                ->required(),
+                                // ->reactive()
+                                ->lazy()
+                                ->required()
+                                ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                    $services = $get('../../services');  // Move up to repeater level to get all items
+                                    $total = collect($services)->sum('price');
+                                    $set('../../cost', $total);
+                                    $set('../../due', max(
+                                        0,
+                                        $total - ($get('../../discount') ?? 0) - ($get('../../advance_payment') ?? 0)
+                                    ));
+                                }),
                         ])
                         ->columns(2)
                         ->afterStateUpdated(function ($state, callable $set, callable $get) {
