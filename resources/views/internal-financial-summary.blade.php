@@ -21,7 +21,7 @@
     $supervisorPct = $record->supervisor_pct ?? 0;
     $supervisorAmount = $record->supervisor_amount ?? 0;
     $companyAmount = $record->company_amount ?? 0;
-    $companyShare = ($servicesTotal - $discount) - $mechanicAmount - $supervisorAmount;
+    $companyShare = $record->company_amount;
 
     $totalAfterDiscount = max(0, $servicesTotal - $discount);
 

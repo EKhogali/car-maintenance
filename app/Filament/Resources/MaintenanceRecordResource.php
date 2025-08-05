@@ -456,11 +456,11 @@ class MaintenanceRecordResource extends Resource
                     ->icon('heroicon-o-pencil')
                     ->form([
                         Forms\Components\TextInput::make('mechanic_pct')
-                            ->label('نسبة الفني (%)')
+                            ->label('نسبة الفني ')
                             ->numeric()
                             ->minValue(0)
                             ->maxValue(100)
-                            ->suffix('%')
+                            // ->suffix('%')
                             ->required()
                             ->default(fn($record) => $record->mechanic_pct), // ✅ Pre-fill current value
                     ])

@@ -37,25 +37,37 @@ class MaintenanceRecord extends Model
 
     public function recalculateTotals(): void
     {
-        $servicesTotal = $this->services->sum('price');
-        $partsTotal = $this->partUsages->sum(fn($p) => $p->quantity * $p->unit_price);
+        $servicesTotal = $this->services->sum('price'); // A
+        $partsTotal = $this->partUsages->sum(fn($p) => $p->quantity * $p->unit_price); // F
 
-        $billablePartsTotal = $this->partUsages
-            ->filter(fn($p) => $p->unit_price > 0)
-            ->sum(fn($p) => $p->unit_price) ?? 0;
-
-        $discount = $this->discount ?? 0;
+        $discount = $this->discount ?? 0; // B
         $advance = $this->advance_payment ?? 0;
-        $mechanicPct = $this->mechanic_pct ?? 0;
+        $mechanicPct = $this->mechanic_pct ?? 0; // D
 
-        $discountedServiceTotal = max(0, $servicesTotal - $discount);
+        $discountedServiceTotal = max(0, $servicesTotal - $discount); // C = A - B
 
-        $mechanicAmount = round($discountedServiceTotal * $mechanicPct / 100, 2);
-        $supervisorAmount = round(($servicesTotal + $billablePartsTotal) * 0.10, 2);
-        // $supervisorAmount = round(($servicesTotal + $partsTotal) * 0.10, 2);
+        // E = Discounted Service Total * Mechanic Percentage
+        $mechanicAmount = round($discountedServiceTotal * $mechanicPct, 2);
+// dd($servicesTotal, $discount, $discountedServiceTotal, $mechanicAmount);
+        // G = Supervisor share from parts (10% of F)
+        $supervisorFromParts = round($partsTotal * 0.10, 2)  * 0.1;
+// dd($supervisorFromParts * 0.1);
+        // H = Supervisor share from service revenue (10% of Mechanic Share E)
+        $supervisorFromServices = round($mechanicAmount * 0.10, 2);
+
+        // M = Supervisor share from service after discount (10% of C)
+        $supervisorFromDiscountedService = round($discountedServiceTotal * 0.10, 2);
+
+        // Total Supervisor Amount (G + H + M)
+        $supervisorAmount = $supervisorFromParts +  $supervisorFromDiscountedService;
+
+        // Total Due = Discounted Service Total + Parts Total
         $due = $discountedServiceTotal + $partsTotal;
-        $companyAmount = round($due - $advance - $partsTotal - $mechanicAmount - $supervisorAmount, 2);
 
+        // Company Share = Due - Advance Payment - Parts Total - Mechanic Share - Supervisor Share
+        $companyAmount = round(($discountedServiceTotal + ($partsTotal * 0.1))   - $mechanicAmount - $supervisorAmount, 2);
+// dd($discountedServiceTotal , $partsTotal, $partsTotal * 0.1   , $mechanicAmount , $supervisorAmount, $companyAmount);
+        // Update Model Fields
         $this->services_total = $servicesTotal;
         $this->parts_total = $partsTotal;
         $this->mechanic_amount = $mechanicAmount;
@@ -65,6 +77,38 @@ class MaintenanceRecord extends Model
 
         $this->saveQuietly(); // Prevent infinite loop if called from observer
     }
+
+
+    // public function recalculateTotals(): void
+    // {
+    //     $servicesTotal = $this->services->sum('price');
+    //     $partsTotal = $this->partUsages->sum(fn($p) => $p->quantity * $p->unit_price);
+
+    //     $billablePartsTotal = $this->partUsages
+    //         ->filter(fn($p) => $p->unit_price > 0)
+    //         ->sum(fn($p) => $p->unit_price) ?? 0;
+
+    //     $discount = $this->discount ?? 0;
+    //     $advance = $this->advance_payment ?? 0;
+    //     $mechanicPct = $this->mechanic_pct ?? 0;
+
+    //     $discountedServiceTotal = max(0, $servicesTotal - $discount);
+
+    //     $mechanicAmount = round($discountedServiceTotal * $mechanicPct / 100, 2);
+    //     $supervisorAmount = round(($servicesTotal + $billablePartsTotal) * 0.10, 2);
+    //     // $supervisorAmount = round(($servicesTotal + $partsTotal) * 0.10, 2);
+    //     $due = $discountedServiceTotal + $partsTotal;
+    //     $companyAmount = round($due - $advance - $partsTotal - $mechanicAmount - $supervisorAmount, 2);
+
+    //     $this->services_total = $servicesTotal;
+    //     $this->parts_total = $partsTotal;
+    //     $this->mechanic_amount = $mechanicAmount;
+    //     $this->supervisor_amount = $supervisorAmount;
+    //     $this->company_amount = $companyAmount;
+    //     $this->due = $due;
+
+    //     $this->saveQuietly(); // Prevent infinite loop if called from observer
+    // }
 
 
 
