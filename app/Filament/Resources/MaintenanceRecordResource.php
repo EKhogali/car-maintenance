@@ -114,6 +114,7 @@ class MaintenanceRecordResource extends Resource
                             Forms\Components\TextInput::make('mileage')
                                 ->label(__('car.mileage'))
                                 ->numeric()
+                                ->hidden()
                                 ->default(0),
 
                             Forms\Components\TextInput::make('engine_type')
@@ -352,6 +353,11 @@ class MaintenanceRecordResource extends Resource
             Tables\Columns\TextColumn::make('id')
                 ->label(__('maintenance.id'))
                 ->sortable()
+    ->formatStateUsing(function ($state, $record, $column, $rowLoop) {
+        $bg = $rowLoop->odd ? '#f9fafb' : '#ffffff';
+        return "<span style='display:block; background-color:{$bg}; padding:4px;'>{$state}</span>";
+    })
+    ->html()
                 ->searchable(),
 
             Tables\Columns\TextColumn::make('car.license_plate')
@@ -427,8 +433,14 @@ class MaintenanceRecordResource extends Resource
                 ->toggleable(isToggledHiddenByDefault: true),
 
             Tables\Columns\TextColumn::make('odometer_reading')
-                ->label(__('maintenance.odometer'))
+                ->label(__('maintenance.odometer')),
+
+            Tables\Columns\TextColumn::make('id')
+                ->label(__('maintenance.id'))
+                ->sortable()
+                ->searchable(),
         ])
+            
             ->filters([
                 Tables\Filters\Filter::make('due')
                     ->label(__('maintenance.filter.due'))
