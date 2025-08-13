@@ -46,9 +46,9 @@ class TreasuryResource extends Resource
                 ]),
             Forms\Components\TextInput::make('reference')->label(__('treasury.reference')),
             Forms\Components\Textarea::make('note')->label(__('treasury.note')),
-            Forms\Components\TagsInput::make('tags')
-                ->label(__('treasury.tags'))
-                ->suggestions(\App\Models\Tag::pluck('name')->toArray()),
+            // Forms\Components\TagsInput::make('tags')
+            //     ->label(__('treasury.tags'))
+            //     ->suggestions(\App\Models\Tag::pluck('name')->toArray()),
 
         ]);
     }
@@ -66,7 +66,7 @@ class TreasuryResource extends Resource
             Tables\Columns\TextColumn::make('type')->label(__('treasury.type'))->formatStateUsing(fn($state) => __('treasury.' . $state)),
             Tables\Columns\TextColumn::make('reference')->label(__('treasury.reference')),
             Tables\Columns\TextColumn::make('note')->label(__('treasury.note')),
-            Tables\Columns\TagsColumn::make('tags.name')->label(__('treasury.tags')),
+            // Tables\Columns\TagsColumn::make('tags.name')->label(__('treasury.tags')),
             Tables\Columns\TextColumn::make('created_at')->label(__('treasury.created_at'))->date(),
 
         ])->filters([
@@ -92,19 +92,19 @@ class TreasuryResource extends Resource
                         // })
                                                 ,
 
-                    Tables\Filters\Filter::make('tags')
-                        ->form([
-                            Forms\Components\Select::make('tags')
-                                ->label('الوسوم')
-                                ->options(\App\Models\Tag::pluck('name', 'id')->toArray())
-                                ->multiple()
-                                ->preload()
-                        ])
-                        ->query(function (Builder $query, array $data) {
-                            if (isset($data['tags']) && count($data['tags'])) {
-                                $query->whereHas('tags', fn($q) => $q->whereIn('tags.id', $data['tags']));
-                            }
-                        }),
+                    // Tables\Filters\Filter::make('tags')
+                    //     ->form([
+                    //         Forms\Components\Select::make('tags')
+                    //             ->label('الوسوم')
+                    //             ->options(\App\Models\Tag::pluck('name', 'id')->toArray())
+                    //             ->multiple()
+                    //             ->preload()
+                    //     ])
+                    //     ->query(function (Builder $query, array $data) {
+                    //         if (isset($data['tags']) && count($data['tags'])) {
+                    //             $query->whereHas('tags', fn($q) => $q->whereIn('tags.id', $data['tags']));
+                    //         }
+                    //     }),
                 ]);
     }
 

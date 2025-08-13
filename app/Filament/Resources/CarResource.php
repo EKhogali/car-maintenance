@@ -64,7 +64,9 @@ class CarResource extends Resource
         Forms\Components\TextInput::make('mileage')
             ->label(__('car.mileage'))
             ->numeric()
-            ->required(),
+            ->required()
+            ->hidden()
+            ->default(1),
 
         Forms\Components\TextInput::make('engine_type')
             ->label(__('car.engine_type')),
@@ -133,9 +135,9 @@ class CarResource extends Resource
                 ->sortable()
                 ->searchable(),
 
-            Tables\Columns\TextColumn::make('mileage')
-                ->label(__('car.mileage'))
-                ->sortable(),
+            // Tables\Columns\TextColumn::make('mileage')
+            //     ->label(__('car.mileage'))
+            //     ->sortable(),
 
             Tables\Columns\TextColumn::make('created_at')
                 ->label(__('car.created_at'))

@@ -24,6 +24,10 @@ use App\Models\MaintenanceRecordServiceType;
 use App\Models\MaintenanceRecordPart;
 use App\Observers\MaintenanceRecordServiceObserver;
 use App\Observers\MaintenanceRecordPartObserver;
+use App\Filament\Pages\FinancialReport;
+use Filament\Facades\Filament;
+
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -76,6 +80,9 @@ class AdminPanelProvider extends PanelProvider
     {
         MaintenanceRecordServiceType::observe(MaintenanceRecordServiceObserver::class);
         MaintenanceRecordPart::observe(MaintenanceRecordPartObserver::class);
+         Filament::registerPages([
+        FinancialReport::class,
+    ]);
     }
 
 }
