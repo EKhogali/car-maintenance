@@ -350,18 +350,64 @@ class MaintenanceRecordResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('id')
-                ->label(__('maintenance.id'))
-                ->sortable()
-    ->formatStateUsing(function ($state, $record, $column, $rowLoop) {
-        $bg = $rowLoop->odd ? '#f9fafb' : '#ffffff';
-        return "<span style='display:block; background-color:{$bg}; padding:4px;'>{$state}</span>";
-    })
-    ->html()
-                ->searchable(),
+            //         Tables\Columns\TextColumn::make('id')
+            //             ->label(__('maintenance.id'))
+            //             ->sortable()
+            //             ->formatStateUsing(function ($state, $record, $column, $rowLoop) {
+            //                 $bg = $rowLoop->odd ? '#f9fafb' : '#ffffff';
+            //                 return "<span style='display:block; background-color:{$bg}; padding:4px;'>{$state}</span>";
+            //             })
+            //             ->html()
+            //             ->searchable(),
 
-            Tables\Columns\TextColumn::make('car.license_plate')
-                ->label(__('maintenance.car')),
+            //         Tables\Columns\TextColumn::make('car.license_plate')
+            //             ->label(__('maintenance.car'))
+            //             ->extraHeaderAttributes([
+            //                 // RTL: stick to the right edge
+            //                 'style' => 'position:sticky; right:0; z-index:11; background:#fff;',
+            //             ])
+            //             ->extraCellAttributes([
+            //                 'style' => 'position:sticky; right:0; z-index:10; background:#fff;',
+            //             ]),
+            //             Tables\Columns\TextColumn::make('car.customer.name')
+            // ->label(__('owner'))
+            // ->searchable(),
+
+            Tables\Columns\TextColumn::make('summary')
+                ->label(__('summary'))   // e.g. "البيانات"
+                // Build the display text:
+                ->getStateUsing(function ($record) {
+                    return sprintf(
+                        '#%s — %s — %s — %s',
+                        $record->id,
+                        $record->car?->make ?? '-',
+                        $record->car?->license_plate ?? '-',
+                        $record->car->customer?->name ?? '-',
+                    );
+                })
+                // Make THIS column searchable across id/brand/plate/owner:
+                ->searchable(query: function (Builder $query, string $search): Builder {
+                    return $query->where(function (Builder $q) use ($search) {
+                        $like = "%{$search}%";
+
+                        $q->where('maintenance_records.id', 'like', $like)
+                            ->orWhereHas(
+                                'car',
+                                fn($cq) =>
+                                $cq->where('brand', 'like', $like)
+                                    ->orWhere('license_plate', 'like', $like)
+                            )
+                            ->orWhereHas(
+                                'customer',
+                                fn($cq) =>
+                                $cq->where('name', 'like', $like)
+                            );
+                    });
+                })
+                ->wrap()   // let long values wrap nicely
+                ->extraHeaderAttributes(['style' => 'position:sticky; right:0; z-index:11; background:#fff;'])
+                ->extraCellAttributes(['style' => 'position:sticky; right:0; z-index:10; background:#fff;']),
+
 
             Tables\Columns\TextColumn::make('mechanic.name')
                 ->label(__('maintenance.mechanic'))
@@ -435,12 +481,9 @@ class MaintenanceRecordResource extends Resource
             Tables\Columns\TextColumn::make('odometer_reading')
                 ->label(__('maintenance.odometer')),
 
-            Tables\Columns\TextColumn::make('id')
-                ->label(__('maintenance.id'))
-                ->sortable()
-                ->searchable(),
+
         ])
-            
+
             ->filters([
                 Tables\Filters\Filter::make('due')
                     ->label(__('maintenance.filter.due'))
